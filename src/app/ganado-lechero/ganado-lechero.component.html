@@ -1,0 +1,36 @@
+<div class="container">
+
+    <!-- Sección dinámica para gestionar ganado -->
+    <div id="livestock-section">
+        <h2 id="section-title">Gestión de Ganado</h2>
+        
+        <!-- Formulario dinámico para agregar ganado -->
+        <div id="add-livestock">
+            <h3>Añadir Ganado</h3>
+            <form id="livestock-form">
+                <div id="lechero-fields">
+                    <label for="vaca-id">Número de Vaca:</label>
+                    <input type="text" id="vaca-id">
+                    <label for="vaca-weight">Peso Estimado:</label>
+                    <input type="number" id="vaca-weight">
+                    <label for="vaca-arrival">Fecha de Llegada:</label>
+                    <input type="date" id="vaca-arrival">
+                    <label for="milk-weight">Peso Semanal de Leche:</label>
+                    <input type="number" id="milk-weight">
+                    <label for="min-milk">Índice Mínimo de Leche:</label>
+                    <input type="number" id="min-milk">
+                </div>                 
+                <button type="submit">Agregar Ganado</button>
+            </form>
+        </div>
+        
+        <!-- Listado de ganado -->
+        <div id="livestock-list">
+            <h3>Lista de Ganado</h3>
+            <ul id="livestock-items">
+                <!-- Aquí se listarán los toros o vacas añadidos -->
+            </ul>
+        </div>
+    </div>
+    
+    </div>

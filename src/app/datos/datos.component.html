@@ -1,0 +1,23 @@
+
+    <div class="container">
+        <h1>Datos de la Finca</h1>
+        
+        <!-- Formulario para crear la finca -->
+        <form id="farm-form" (submit)="crearFinca()">
+            <label for="farm-name">Nombre de la Finca:</label>
+            <input type="text" id="farm-name" required>
+            
+            <label for="type">Tipo de Ganado:</label>
+            <select id="type" (change)="onTypeChange($event)" required>
+                <option value="lechero">Ganado Lechero</option>
+                <option value="engorde">Ganado de Engorde</option>
+            </select>
+            
+            <button type="submit">Crear Finca</button>
+        </form>
+        
+        
+    </div>
+
+    <script src="firebase.js"></script>
+    <script src="datos.js"></script>
