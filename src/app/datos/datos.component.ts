@@ -30,16 +30,12 @@ export class DatosComponent {
   }
 
   crearFinca() {
-    if (this.tipoGanado === 'lechero') {
-      this.router.navigate(['/ganado-lechero']);
-      //lecheroFields.style.display = 'block';
-      //engordeFields.style.display = 'none';
-    } else {
+
+   
       this.router.navigate(['/ganado-engorde']);
       //lecheroFields.style.display = 'none';
       //engordeFields.style.display = 'block';
-    }
-
+    
   }
 
 }
