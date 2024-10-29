@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
   styleUrl: './datos.component.scss'
 })
 export class DatosComponent {
-  typeSelect: any = document.getElementById('type');
   tipoGanado: string = 'lechero';
 
   constructor(private router: Router) {
