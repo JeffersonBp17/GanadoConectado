@@ -22,7 +22,7 @@ interface Livestock {
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './ganado-engorde.component.html',
-  styleUrls: ['./ganado-engorde.component.css']
+  styleUrls: ['./ganado-engorde.component.scss']
 })
 
 export class GanadoComponent {
