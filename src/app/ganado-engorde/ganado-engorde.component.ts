@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
 
 interface WeightRecord {
   date: string;
@@ -19,9 +19,12 @@ interface Livestock {
 
 @Component({
   selector: 'app-ganado',
+  standalone: true,
+  imports: [ReactiveFormsModule],
   templateUrl: './ganado-engorde.component.html',
   styleUrls: ['./ganado-engorde.component.css']
 })
+
 export class GanadoComponent {
   livestockForm: FormGroup;
   weightForm: FormGroup;
