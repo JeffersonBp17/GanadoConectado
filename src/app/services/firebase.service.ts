@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { environment } from '../../environments/environment';
-import { getFirestore } from "firebase/firestore"; // conexion base de datos
-import { collection, getDocs, addDoc } from "firebase/firestore"; // conexion base de datos
+import { collection, getDocs, addDoc, getFirestore } from "firebase/firestore"; // conexion base de datos
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 const app = initializeApp(environment.firebaseConfig);
 
@@ -22,8 +22,37 @@ export class FirebaseService {
     return db;
   }
 
-  registrarUsuario() {
-    
+  async registrarUsuario(datos: any) {
+    try {
+      // registro de usuario en base de datos
+      console.log(datos);
+      const docRef = await addDoc(collection(this.initializeDb(), "Usuario"), {
+        nombre: datos.fullname,
+        correo: datos.email,
+        contra: datos.password,
+        telefono: datos.phone
+      });
+      console.log("Document written with ID: ", docRef.id);
+
+      // registro de usuario en autenticacion
+      const auth = getAuth();
+      createUserWithEmailAndPassword(auth, datos.email, datos.password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log(user, userCredential);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(error, errorCode, errorMessage)
+          // ..
+        });
+
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   }
 
   /**
@@ -33,8 +62,8 @@ export class FirebaseService {
    */
   async obtenerDatosDB(collectionName: string) {
     const querySnapshot = await getDocs(collection(this.initializeDb(), collectionName));
-    let dbData:any[] = [];
-    querySnapshot.forEach((doc) => {      
+    let dbData: any[] = [];
+    querySnapshot.forEach((doc) => {
       dbData.push(doc.data());
     });
 
@@ -59,7 +88,7 @@ export class FirebaseService {
         pesoCompra: datos.purchaseWeight,
         pesoFinca: datos.arrivalWeight
       });
-      
+
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
