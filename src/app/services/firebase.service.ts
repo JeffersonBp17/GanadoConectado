@@ -46,13 +46,13 @@ export class FirebaseService {
    */
   async agregarGanado(datos: any) {
     try {
-      console.log(datos);
-      let dateString = datos.purchaseDate.replace('/', '-');
-      let myDate = new Date(dateString);
-      console.log(myDate);
+      //console.log(datos);
+      const [año, mes, dia] = datos.purchaseDate.split('-');
+      let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+      console.log(fecha);
 
       const docRef = await addDoc(collection(this.initializeDb(), "Ganado"), {
-        fechaCompra: myDate,
+        fechaCompra: fecha,
         lugarCompra: datos.purchaseLocation,
         numLote: datos.batchNumber,
         numToro: datos.toroId,

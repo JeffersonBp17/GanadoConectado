@@ -45,7 +45,7 @@ export class GanadoComponent {
     this.livestockForm.reset();
 
     this.firebase.agregarGanado(this.livestockList[0]);
-    console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
+    //console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
     
   }
 
