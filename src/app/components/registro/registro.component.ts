@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
+import { Usuario } from '../../types/Usuario';
 
 @Component({
   selector: 'app-registro',
@@ -26,9 +27,8 @@ export class RegistroComponent {
    * Método para manejar la acción del botón 'Registrar'
    */
   onSubmit() {
-    // se obtinen los datos de email y password para mostrarlos
-    console.log('Nombre Completo: ' + this.registroForm.get('fullname')?.value, '\nCorreo Electrónico: ' + this.registroForm.get('email')?.value,
-      '\nNúmero de Teléfono: ' + this.registroForm.get('phone')?.value, '\nContraseña: ' + this.registroForm.get('password')?.value);
+    console.log(this.registroForm.value);
+    this.firebase.registrarUsuario(this.registroForm.value);
 
     this.router.navigate(['/datos']);
   }
