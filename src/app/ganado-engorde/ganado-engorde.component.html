@@ -3,30 +3,29 @@
     <div id="livestock-section">
         <h2 id="section-title">Gestión de Ganado</h2>
         
-        <!-- Formulario dinámico para agregar ganado -->
+        <!-- Formulario para agregar ganado -->
         <div id="add-livestock">
             <h3>Añadir Ganado</h3>
-            <form id="livestock-form">                
+            <form [formGroup]="livestockForm" (ngSubmit)="addLivestock()">                
                 <div id="purchase-fields">
                     <label for="toro-id">Número de Toro:</label>
-                    <input type="text" id="toro-id">
+                    <input type="text" formControlName="toroId">
                     
                     <label for="purchase-date">Fecha de Compra:</label>
-                    <input type="date" id="purchase-date">
+                    <input type="date" formControlName="purchaseDate">
                     
                     <label for="purchase-weight">Peso de Compra (kg):</label>
-                    <input type="number" id="purchase-weight">
+                    <input type="number" formControlName="purchaseWeight">
                     
                     <label for="purchase-location">Lugar de Compra:</label>
-                    <input type="text" id="purchase-location">
+                    <input type="text" formControlName="purchaseLocation">
                     
                     <label for="arrival-weight">Peso de Llegada a la Finca (kg):</label>
-                    <input type="number" id="arrival-weight">
+                    <input type="number" formControlName="arrivalWeight">
                     
                     <label for="batch-number">Lote N°:</label>
-                    <input type="text" id="batch-number">
+                    <input type="text" formControlName="batchNumber">
                 </div>
-    
                 <button type="submit">Agregar</button>
             </form>
         </div>
@@ -34,8 +33,39 @@
         <!-- Listado de ganado -->
         <div id="livestock-list">
             <h3>Lista de Ganado</h3>
-            <ul id="livestock-items">
-                <!-- Aquí se listarán los toros o vacas añadidos -->
+            <ul>
+                <li *ngFor="let livestock of livestockList">
+                    <div>
+                        Número de Toro: {{ livestock.toroId }},
+                        Fecha de Compra: {{ livestock.purchaseDate }},
+                        Peso de Compra: {{ livestock.purchaseWeight }} kg,
+                        Lugar de Compra: {{ livestock.purchaseLocation }},
+                        Peso de Llegada: {{ livestock.arrivalWeight }} kg,
+                        Lote N°: {{ livestock.batchNumber }}
+                    </div>
+
+                    <!-- Formulario para registrar peso y observaciones -->
+                    <form [formGroup]="weightForm" (ngSubmit)="addWeightRecord(livestock.toroId)">
+                        <label for="date">Fecha de Peso:</label>
+                        <input type="date" formControlName="date">
+                        
+                        <label for="weight">Peso (kg):</label>
+                        <input type="number" formControlName="weight">
+                        
+                        <label for="observation">Observación:</label>
+                        <input type="text" formControlName="observation">
+                        
+                        <button type="submit">Agregar Registro de Peso</button>
+                    </form>
+
+                    <!-- Historial de registros de peso y observaciones -->
+                    <h4>Historial de Peso y Observaciones</h4>
+                    <ul>
+                        <li *ngFor="let record of livestock.weightRecords">
+                            Fecha: {{ record.date }}, Peso: {{ record.weight }} kg, Observación: {{ record.observation }}
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>
