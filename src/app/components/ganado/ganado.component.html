@@ -9,7 +9,7 @@
             <form [formGroup]="livestockForm" (ngSubmit)="addLivestock()">                
                 <div id="purchase-fields">
                     <label for="toro-id">Número de Toro:</label>
-                    <input type="text" formControlName="toroId">
+                    <input type="number" formControlName="toroId">
                     
                     <label for="purchase-date">Fecha de Compra:</label>
                     <input type="date" formControlName="purchaseDate">
@@ -24,7 +24,7 @@
                     <input type="number" formControlName="arrivalWeight">
                     
                     <label for="batch-number">Lote N°:</label>
-                    <input type="text" formControlName="batchNumber">
+                    <input type="number" formControlName="batchNumber">
                 </div>
                 <button type="submit">Agregar</button>
             </form>

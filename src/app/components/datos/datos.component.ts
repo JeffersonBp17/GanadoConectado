@@ -26,16 +26,14 @@ export class DatosComponent {
     // Aquí puedes agregar la lógica que necesites según el valor seleccionado.
     //const type = this.typeSelect.value;
 
-    
+
   }
 
   crearFinca() {
+    this.router.navigate(['/ganado']);
+    //lecheroFields.style.display = 'none';
+    //engordeFields.style.display = 'block';
 
-   
-      this.router.navigate(['/ganado-engorde']);
-      //lecheroFields.style.display = 'none';
-      //engordeFields.style.display = 'block';
-    
   }
 
 }

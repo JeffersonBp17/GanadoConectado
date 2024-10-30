@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { RegistroComponent } from './registro/registro.component';
-import { DatosComponent } from './datos/datos.component';
-import { LoginComponent } from './login/login.component';
-import { GanadoComponent } from './ganado-engorde/ganado-engorde.component';
+import { RegistroComponent } from './components/registro/registro.component';
+import { DatosComponent } from './components/datos/datos.component';
+import { LoginComponent } from './components/login/login.component';
+import { GanadoComponent } from './components/ganado/ganado.component';
 
 export const routes: Routes = [
     {
@@ -23,7 +23,7 @@ export const routes: Routes = [
         component: RegistroComponent
     },
     {
-        path: 'ganado-engorde',
+        path: 'ganado',
         component: GanadoComponent
     },
 

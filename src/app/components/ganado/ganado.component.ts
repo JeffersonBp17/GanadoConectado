@@ -1,36 +1,22 @@
 import { Component } from '@angular/core';
+import { NgFor } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
-
-interface WeightRecord {
-  date: string;
-  weight: number;
-  observation: string;
-}
-
-interface Livestock {
-  toroId: string;
-  purchaseDate: string;
-  purchaseWeight: number;
-  purchaseLocation: string;
-  arrivalWeight: number;
-  batchNumber: string;
-  weightRecords: WeightRecord[]; // Historial de peso y observaciones
-}
+import { FirebaseService } from '../../services/firebase.service';
+import { Livestock } from '../../types/Livestock';
 
 @Component({
   selector: 'app-ganado',
   standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './ganado-engorde.component.html',
-  styleUrls: ['./ganado-engorde.component.scss']
+  imports: [ReactiveFormsModule, NgFor],
+  templateUrl: './ganado.component.html',
+  styleUrl: './ganado.component.scss'
 })
-
 export class GanadoComponent {
   livestockForm: FormGroup;
   weightForm: FormGroup;
   livestockList: Livestock[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private firebase: FirebaseService) {
     // Formulario para registrar el toro
     this.livestockForm = this.fb.group({
       toroId: [''],
@@ -57,6 +43,10 @@ export class GanadoComponent {
     };
     this.livestockList.push(newLivestock);
     this.livestockForm.reset();
+
+    this.firebase.agregarGanado(this.livestockList[0]);
+    console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
+    
   }
 
   // Función para agregar un registro de peso y observación a un toro específico
