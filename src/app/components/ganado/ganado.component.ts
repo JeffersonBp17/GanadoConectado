@@ -1,30 +1,15 @@
+import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
-
-interface WeightRecord {
-  date: string;
-  weight: number;
-  observation: string;
-}
-
-interface Livestock {
-  toroId: string;
-  purchaseDate: string;
-  purchaseWeight: number;
-  purchaseLocation: string;
-  arrivalWeight: number;
-  batchNumber: string;
-  weightRecords: WeightRecord[]; // Historial de peso y observaciones
-}
+import { Livestock } from '../../types/LiveStock';
 
 @Component({
   selector: 'app-ganado',
   standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './ganado-engorde.component.html',
-  styleUrls: ['./ganado-engorde.component.css']
+  imports: [ReactiveFormsModule, NgFor],
+  templateUrl: './ganado.component.html',
+  styleUrl: './ganado.component.scss'
 })
-
 export class GanadoComponent {
   livestockForm: FormGroup;
   weightForm: FormGroup;
@@ -67,4 +52,5 @@ export class GanadoComponent {
       this.weightForm.reset();
     }
   }
+
 }

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GanadoEngordeComponent } from './ganado-engorde.component';
+import { GanadoComponent } from './ganado.component';
 
-describe('GanadoEngordeComponent', () => {
-  let component: GanadoEngordeComponent;
-  let fixture: ComponentFixture<GanadoEngordeComponent>;
+describe('GanadoComponent', () => {
+  let component: GanadoComponent;
+  let fixture: ComponentFixture<GanadoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GanadoEngordeComponent]
+      imports: [GanadoComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GanadoEngordeComponent);
+    fixture = TestBed.createComponent(GanadoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
