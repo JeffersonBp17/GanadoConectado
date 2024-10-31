@@ -29,10 +29,8 @@ export class DatosComponent {
     
   }
 
-  crearFinca() {
-
-   
-      this.router.navigate(['/ganado-engorde']);
+  crearFinca() {   
+      this.router.navigate(['/ganado']);
       //lecheroFields.style.display = 'none';
       //engordeFields.style.display = 'block';
     

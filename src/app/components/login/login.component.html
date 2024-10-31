@@ -1,5 +1,8 @@
 
     <div class="container">
+        <div class="image-container">
+            <img src="Logo.jpg" alt="Imagen de Ganado">
+            
         <h1>Ganado Conectado</h1> 
         <!-- [formGroup]="loginForm" : se usa para el manejo del formulario, (ngSubmit) se usa para manejar la acción del submit -->
         <form id="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()"> 
@@ -10,5 +13,7 @@
             <button type="submit">Iniciar Sesión</button>
             <p>¿No tienes cuenta? <a href="/registro">Regístrate aquí</a></p>
         </form>
+
+        <button (click)="login()">Login with Google</button>
     </div>
 

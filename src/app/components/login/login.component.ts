@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +19,40 @@ export class LoginComponent {
     password: new FormControl('')
   });
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private firebase: FirebaseService) { }
+
+  ngOnInit() {
+    //this.obtenerDatosDB();
+  }
+  
+  async obtenerDatosDB() {
+    const listaGanado = await this.firebase.obtenerDatosDB("Ganado");
+    console.log("listaGanado: ", listaGanado);
+  }
+  login() {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log(result);
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential:any = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
 
   /**
    * Método para manejar la acción del botón 'Iniciar Sesión'
