@@ -63,5 +63,12 @@ export class LoginComponent {
 
     this.router.navigate(['/datos']);
   }
+  openWhatsApp() {
+    const phoneNumber = '+50685075430'; // Reemplaza con tu número de WhatsApp
+    const message = encodeURIComponent('Hola, necesito ayuda con el sistema de Ganado Conectado.');
+    const url = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(url, '_blank');
+}
+
 
 }
