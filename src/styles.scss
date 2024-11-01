@@ -144,13 +144,64 @@ a:hover {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+
+
+/* Contenedor y estilo del botón */
+.whatsapp-button-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Contenedor para posicionar el botón en la parte superior derecha */
+.whatsapp-button-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+/* Estilo del botón de WhatsApp */
 .whatsapp-button {
     background-color: #25d366;
     color: white;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 5px 10px;
+    font-size: 14px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Espacio entre el icono y el texto */
+}
+
+/* Tamaño del icono */
+.whatsapp-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Para que el body ocupe toda la altura de la ventana */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Estilo del fondo con la imagen */
+body {
+    background: url('/GanadoFondo.jpg') no-repeat center center fixed; /* Cambia a la ruta correcta */
+    background-size: cover; /* Para cubrir todo el fondo */
+}
+
+/* Estilo del contenedor del formulario */
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8); /* Fondo semitransparente para mejorar legibilidad */
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
