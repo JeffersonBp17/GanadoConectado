@@ -3,11 +3,13 @@ import { RegistroComponent } from './components/registro/registro.component';
 import { DatosComponent } from './components/datos/datos.component';
 import { LoginComponent } from './components/login/login.component';
 import { GanadoComponent } from './components/ganado/ganado.component';
+import { authGuard } from './guards/auth.guard';
+import { NoEncontradoComponent } from './components/no-encontrado/no-encontrado.component';
 
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: "login",
+        redirectTo: "/login",
         pathMatch: "full"
     },
     {
@@ -16,7 +18,8 @@ export const routes: Routes = [
     },
     {
         path: "datos",
-        component: DatosComponent
+        component: DatosComponent,
+        canActivate: [authGuard]
     },
     {
         path: 'registro',
@@ -24,7 +27,12 @@ export const routes: Routes = [
     },
     {
         path: 'ganado',
-        component: GanadoComponent
+        component: GanadoComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: '**',
+        component: NoEncontradoComponent
     }
 
 ];
