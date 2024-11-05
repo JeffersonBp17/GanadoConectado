@@ -1,3 +1,21 @@
 .container {
     max-width: 600px;
 }
+
+.login-btn {
+    background-color: #009688;
+    color: white;
+}
+
+.login-btn:hover {
+    background-color: #00796b;
+}
+
+.btn-outline-success {
+    color: #009688;
+}
+
+.btn-outline-success:hover {
+    background-color: #00796b;
+    color: white;
+}
