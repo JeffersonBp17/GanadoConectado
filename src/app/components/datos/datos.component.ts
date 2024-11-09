@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
   selector: 'app-datos',
   standalone: true,
-  imports: [],
+  imports: [HeaderComponent],
   templateUrl: './datos.component.html',
   styleUrl: './datos.component.scss'
 })

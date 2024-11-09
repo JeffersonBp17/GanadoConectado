@@ -1,22 +1,64 @@
+<app-header></app-header>
 
-    <div class="container">
-        <h1>Datos de la Finca</h1>
-        
-        <!-- Formulario para crear la finca -->
-        <form id="farm-form" (submit)="crearFinca()">
-            <label for="farm-name">Nombre de la Finca:</label>
-            <input type="text" id="farm-name" required>
-            
-            <label for="type">Tipo de Ganado:</label>
-            <select id="type" (change)="onTypeChange($event)" required>
-                <option value="engorde">Ganado de Engorde</option>
-            </select>
-            
-            <button type="submit">Crear Finca</button>
-        </form>
-        
-        
-    </div>
+<div class="container" style="max-width: 600px;">
+  <h1>Datos de la Finca</h1>
 
-    <script src="firebase.js"></script>
-    <script src="datos.js"></script>
+  <!-- Formulario para crear la finca -->
+  <form id="farm-form" (submit)="crearFinca()">
+    <label for="farm-name">Nombre de la Finca:</label>
+    <input type="text" id="farm-name" required>
+
+    <label for="type">Tipo de Ganado:</label>
+    <select id="type" (change)="onTypeChange($event)" required>
+      <option value="engorde">Ganado de Engorde</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Crear Finca</button>
+  </form>
+</div>
+
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Número de Toro</th>
+        <th scope="col">Fecha de Compra</th>
+        <th scope="col">Peso de Compra (kg)</th>
+        <th scope="col">Lugar de Compra</th>
+        <th scope="col">Peso de Llegada a la Finca (kg)</th>
+        <th scope="col">Lote N°</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>&#64;mdo</td>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>&#64;mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>&#64;fat</td>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>&#64;fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>Larry the Bird</td>
+        <td>Jacob</td>
+        <td>&#64;twitter</td>
+        <td>Larry</td>
+        <td>Thornton</td>
+        <td>&#64;twitter</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,13 +1,29 @@
 .container {
+    margin: 0;
+    padding: 0;
+    max-width: inherit;
+    max-height: inherit;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+}
+
+.card {
+    margin: 50px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border: initial;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     max-width: 600px;
 }
 
-.login-btn {
+.btn-login {
     background-color: #009688;
     color: white;
 }
 
-.login-btn:hover {
+.btn-login:hover {
     background-color: #00796b;
 }
 

@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Livestock } from '../../types/LiveStock';
 import { FirebaseService } from '../../services/firebase.service';
+import { HeaderComponent } from "../header/header.component";
 
 @Component({
   selector: 'app-ganado',
   standalone: true,
-  imports: [ReactiveFormsModule, NgFor],
+  imports: [ReactiveFormsModule, NgFor, HeaderComponent],
   templateUrl: './ganado.component.html',
   styleUrl: './ganado.component.scss'
 })
