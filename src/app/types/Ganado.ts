@@ -1,8 +1,10 @@
+import { HistorialPeso } from "./HistorialPeso"
+
 export type Ganado = {
-    fechaCompra: Date,
-    lugarCompra: string,
-    numLote: number,
-    numToro: number,
-    pesoCompra: number,
-    pesoFinca: number
+    FechaCompra: Date,
+    LugarCompra: string,
+    NumeroLote: number,
+    NumeroToro: number,
+    PesoCompra: number,
+    Historial?: HistorialPeso[],
 }

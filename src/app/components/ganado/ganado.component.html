@@ -1,30 +1,31 @@
 <app-header></app-header>
 
+@if (estadoAgregar) {
 <div class="container">
     <!-- Sección dinámica para gestionar ganado -->
     <div id="livestock-section">
         <h2 id="section-title">Gestión de Ganado</h2>
-        
+
         <!-- Formulario para agregar ganado -->
         <div id="add-livestock">
             <h3>Añadir Ganado</h3>
-            <form [formGroup]="livestockForm" (ngSubmit)="addLivestock()">                
+            <form [formGroup]="livestockForm" (ngSubmit)="addLivestock()">
                 <div id="purchase-fields">
                     <label for="toro-id">Número de Toro:</label>
                     <input class="form-control-lg" type="number" formControlName="toroId">
-                    
+
                     <label for="purchase-date">Fecha de Compra:</label>
                     <input class="form-control-lg" type="date" formControlName="purchaseDate">
-                    
+
                     <label for="purchase-weight">Peso de Compra (kg):</label>
                     <input class="form-control-lg" type="number" formControlName="purchaseWeight">
-                    
+
                     <label for="purchase-location">Lugar de Compra:</label>
                     <input class="form-control-lg" type="text" formControlName="purchaseLocation">
-                    
+
                     <label for="arrival-weight">Peso de Llegada a la Finca (kg):</label>
                     <input class="form-control-lg" type="number" formControlName="arrivalWeight">
-                    
+
                     <label for="batch-number">Lote N°:</label>
                     <input class="form-control-lg" type="number" formControlName="batchNumber">
                 </div>
@@ -32,7 +33,7 @@
                 <button type="submit">Agregar</button>
             </form>
         </div>
-        
+
         <!-- Listado de ganado -->
         <div id="livestock-list">
             <h3>Lista de Ganado</h3>
@@ -51,10 +52,10 @@
                     <form [formGroup]="weightForm" (ngSubmit)="addWeightRecord(livestock.toroId)">
                         <label for="date">Fecha de Peso:</label>
                         <input type="date" formControlName="date">
-                        
+
                         <label for="weight">Peso (kg):</label>
                         <input type="number" formControlName="weight">
-                        
+
                         <label for="observation">Observación:</label>
                         <input type="text" formControlName="observation">
                         <br><br>
@@ -65,7 +66,9 @@
                     <h4>Historial de Peso y Observaciones</h4>
                     <ul>
                         <li *ngFor="let record of livestock.weightRecords">
-                            Fecha: {{ record.date }}, Peso: {{ record.weight }} kg, Observación: {{ record.observation }}
+                            Fecha: {{ record.date }}, Peso: {{ record.weight }} kg, Observación: {{
+                            record.observation
+                            }}
                         </li>
                     </ul>
                 </li>
@@ -73,4 +76,84 @@
         </div>
     </div>
 </div>
+}
 
+@else {
+<div class="d-flex flex-wrap justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <!-- Tabla de listado de ganado -->
+            <div class="form-row" style="display: flex;">
+                <div class="form-group col-md-8" style="margin: auto">
+                    <h2 id="section-title">Finca La Palma</h2>
+                </div>
+                <div class="form-group col-md-4" style="margin: auto">
+                    <button class="btn btn-success btn-block" (click)="addLivestock()">
+                        <i class="fa fa-plus"></i>
+                        Agregar Ganado
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive-sm" style="text-align: center">
+                <table class="table table-striped table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Número de Toro</th>
+                            <th scope="col">Fecha de Compra</th>
+                            <th scope="col">Peso de Compra (kg)</th>
+                            <th scope="col">Lugar de Compra</th>
+                            <th scope="col">Peso de Llegada a la Finca (kg)</th>
+                            <th scope="col">Lote N°</th>
+                            <th scope="col">Opciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>1</td>
+                            <td>21/10/2024</td>
+                            <td>502</td>
+                            <td>Subasta Muelle</td>
+                            <td>501</td>
+                            <td>3</td>
+                            <td style="display: flex;">
+                                <button type="button" class="btn btn-primary">Editar</button>
+                                <button type="button" class="btn btn-danger">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>4</td>
+                            <td>21/09/2024</td>
+                            <td>408</td>
+                            <td>Subasta Tilaran</td>
+                            <td>410</td>
+                            <td>7</td>
+                            <td style="display: flex;">
+                                <button type="button" class="btn btn-primary">Editar</button>
+                                <button type="button" class="btn btn-danger">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>55</td>
+                            <td>10/11/2024</td>
+                            <td>304</td>
+                            <td>Camara de Ganaderos SC</td>
+                            <td>409</td>
+                            <td>3</td>
+                            <td style="display: flex;">
+                                <button type="button" class="btn btn-primary">Editar</button>
+                                <button type="button" class="btn btn-danger">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+}

@@ -16,6 +16,7 @@ export class GanadoComponent {
   livestockForm: FormGroup;
   weightForm: FormGroup;
   livestockList: Livestock[] = [];
+  estadoAgregar: boolean = true;
 
   constructor(private fb: FormBuilder, private firebaseService: FirebaseService) {
     // Formulario para registrar el toro
@@ -47,6 +48,8 @@ export class GanadoComponent {
 
     this.firebaseService.agregarGanado(this.livestockList[0]);
     //console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
+
+    this.estadoAgregar = !this.estadoAgregar;
   }
 
   // Función para agregar un registro de peso y observación a un toro específico

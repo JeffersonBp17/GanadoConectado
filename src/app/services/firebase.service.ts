@@ -179,12 +179,11 @@ export class FirebaseService {
       console.log(fecha);
 
       const ganado: Ganado = {
-        fechaCompra: fecha,
-        lugarCompra: datos.purchaseLocation,
-        numLote: datos.batchNumber,
-        numToro: datos.toroId,
-        pesoCompra: datos.purchaseWeight,
-        pesoFinca: datos.arrivalWeight
+        FechaCompra: fecha,
+        LugarCompra: datos.purchaseLocation,
+        NumeroLote: datos.batchNumber,
+        NumeroToro: datos.toroId,
+        PesoCompra: datos.purchaseWeight,   
       }
       const docRef = await addDoc(collection(this.initializeDb(), "Ganado"), ganado);
 

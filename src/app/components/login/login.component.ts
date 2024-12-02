@@ -22,11 +22,11 @@ export class LoginComponent {
   constructor(private router: Router, private firebaseService: FirebaseService) { }
 
   ngOnInit() {
-    //this.obtenerDatosDB();
+    this.obtenerDatosDB();
   }
   
   async obtenerDatosDB() {
-    const listaGanado = await this.firebaseService.obtenerDatosDB("Ganado");
+    const listaGanado = await this.firebaseService.obtenerDatosDB("Usuario");
     console.log("listaGanado: ", listaGanado);
   }
 
