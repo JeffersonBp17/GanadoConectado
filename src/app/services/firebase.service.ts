@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { environment } from '../../environments/environment';
 import { collection, getDocs, addDoc, getFirestore } from "firebase/firestore"; // conexion base de datos
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { Usuario } from '../types/Usuario';
+import { Ganado } from '../types/Ganado';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 const app = initializeApp(environment.firebaseConfig);
 
@@ -11,7 +15,7 @@ const app = initializeApp(environment.firebaseConfig);
 })
 export class FirebaseService {
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   /**
    * Función para inicializar la conexión con la base de datos
@@ -26,12 +30,13 @@ export class FirebaseService {
     try {
       // registro de usuario en base de datos
       console.log(datos);
-      const docRef = await addDoc(collection(this.initializeDb(), "Usuario"), {
-        nombre: datos.fullname,
-        correo: datos.email,
-        contra: datos.password,
-        telefono: datos.phone
-      });
+
+      const usuario: Usuario = {
+        Nombre: datos.fullname,
+        Correo: datos.email,
+        Contrasena: datos.password,
+      };
+      const docRef = await addDoc(collection(this.initializeDb(), "Usuario"), usuario);
       console.log("Document written with ID: ", docRef.id);
 
       // registro de usuario en autenticacion
@@ -40,7 +45,7 @@ export class FirebaseService {
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          console.log(user, userCredential);
+          console.log(userCredential);
           // ...
         })
         .catch((error) => {
@@ -53,6 +58,64 @@ export class FirebaseService {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+  }
+
+  async autenticarUsuario(datos: any) {
+    try {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, datos.email, datos.password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log(userCredential);
+
+          let mensaje = `Bienvenido ${datos.email}!!!`;
+          Swal.fire({
+            title: "Inicio de sesión exitoso",
+            text: mensaje,
+            icon: "success"
+          });
+
+          this.router.navigate(['/finca']);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(error, errorCode, errorMessage);
+
+          let mensaje = `Datos incorrectos, correo o contraseña inválida.`;
+          Swal.fire({
+            title: "Error de auntenticación",
+            text: mensaje,
+            icon: "error"
+          });
+        });
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  }
+
+  async cerrarSesionUsuario() {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+        let mensaje = 'Cerrando sesión';
+        Swal.fire({
+          position: "top-end",
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          title: mensaje,
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          this.router.navigate(['/']);
+        });
+      // Sign-out successful.
+    }).catch((error) => {
+      // An error happened.
+    });
   }
 
   /**
@@ -80,14 +143,15 @@ export class FirebaseService {
       let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
       console.log(fecha);
 
-      const docRef = await addDoc(collection(this.initializeDb(), "Ganado"), {
+      const ganado: Ganado = {
         fechaCompra: fecha,
         lugarCompra: datos.purchaseLocation,
         numLote: datos.batchNumber,
         numToro: datos.toroId,
         pesoCompra: datos.purchaseWeight,
         pesoFinca: datos.arrivalWeight
-      });
+      }
+      const docRef = await addDoc(collection(this.initializeDb(), "Ganado"), ganado);
 
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {

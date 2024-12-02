@@ -19,50 +19,49 @@ export class LoginComponent {
     password: new FormControl('')
   });
 
-  constructor(private router: Router, private firebase: FirebaseService) { }
+  constructor(private router: Router, private firebaseService: FirebaseService) { }
 
   ngOnInit() {
     //this.obtenerDatosDB();
   }
   
   async obtenerDatosDB() {
-    const listaGanado = await this.firebase.obtenerDatosDB("Ganado");
+    const listaGanado = await this.firebaseService.obtenerDatosDB("Ganado");
     console.log("listaGanado: ", listaGanado);
   }
-  login() {
+
+  /**
+   * Método para iniciar sesión con Google
+   */
+  loginGoogle() {
     const provider = new GoogleAuthProvider();
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then((result) => {
         console.log(result);
-        // This gives you a Google Access Token. You can use it to access the Google API.
+        // Token de acceso de Google
         const credential:any = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
-        // The signed-in user info.
         const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-      }).catch((error) => {
-        // Handle Errors here.
+      }).catch((error) => { // manejo de errores
         const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
         const email = error.customData.email;
-        // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
       });
   }
 
   /**
    * Método para manejar la acción del botón 'Iniciar Sesión'
    */
-  onSubmit() {
+  login() {
     // se obtinen los datos de email y password para mostrarlos
     console.log('Correo: ' + this.loginForm.get('email')?.value, '\nContraseña: ' + this.loginForm.get('password')?.value);
 
-    this.router.navigate(['/datos']);
+    this.firebaseService.autenticarUsuario(this.loginForm.value);
+    //this.router.navigate(['/finca']);
   }
+
   openWhatsApp() {
     const phoneNumber = '+50685075430'; 
     const message = encodeURIComponent('Hola, necesito ayuda con el sistema de Ganado Conectado.');

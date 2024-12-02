@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-header',
@@ -10,13 +11,13 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent {
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private firebaseService: FirebaseService) { }
 
   /**
    * Función para cerrar sesión
    */
   logOut() {
-    this.router.navigate(['/']);
+    this.firebaseService.cerrarSesionUsuario();    
   }
 
 }

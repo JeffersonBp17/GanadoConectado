@@ -20,15 +20,15 @@ export class RegistroComponent {
     password: new FormControl('')   // Contraseña
   });
 
-  constructor(private router: Router, private firebase: FirebaseService) { }
+  constructor(private router: Router, private firebaseService: FirebaseService) { }
 
   /**
    * Método para manejar la acción del botón 'Registrar'
    */
   onSubmit() {
     console.log(this.registroForm.value);
-    this.firebase.registrarUsuario(this.registroForm.value);
+    this.firebaseService.registrarUsuario(this.registroForm.value);
 
-    this.router.navigate(['/datos']);
+    this.router.navigate(['/finca']);
   }
 }

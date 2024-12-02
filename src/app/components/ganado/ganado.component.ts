@@ -17,7 +17,7 @@ export class GanadoComponent {
   weightForm: FormGroup;
   livestockList: Livestock[] = [];
 
-  constructor(private fb: FormBuilder, private firebase: FirebaseService) {
+  constructor(private fb: FormBuilder, private firebaseService: FirebaseService) {
     // Formulario para registrar el toro
     this.livestockForm = this.fb.group({
       toroId: [''],
@@ -45,7 +45,7 @@ export class GanadoComponent {
     this.livestockList.push(newLivestock);
     this.livestockForm.reset();
 
-    this.firebase.agregarGanado(this.livestockList[0]);
+    this.firebaseService.agregarGanado(this.livestockList[0]);
     //console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
   }
 
