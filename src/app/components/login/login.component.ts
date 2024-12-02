@@ -34,21 +34,7 @@ export class LoginComponent {
    * Método para iniciar sesión con Google
    */
   loginGoogle() {
-    const provider = new GoogleAuthProvider();
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log(result);
-        // Token de acceso de Google
-        const credential:any = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        const user = result.user;
-      }).catch((error) => { // manejo de errores
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        const email = error.customData.email;
-        const credential = GoogleAuthProvider.credentialFromError(error);
-      });
+    this.firebaseService.autenticarGoogle();
   }
 
   /**

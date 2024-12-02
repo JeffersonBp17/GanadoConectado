@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { environment } from '../../environments/environment';
 import { collection, getDocs, addDoc, getFirestore } from "firebase/firestore"; // conexion base de datos
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Usuario } from '../types/Usuario';
 import { Ganado } from '../types/Ganado';
 import { Router } from '@angular/router';
@@ -96,22 +96,57 @@ export class FirebaseService {
     }
   }
 
+  async autenticarGoogle() {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log(result);
+        // Token de acceso de Google
+        const credential: any = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+
+        let mensaje = `Bienvenido ${result.user.displayName}!!!`;
+        Swal.fire({
+          title: "Inicio de sesión exitoso",
+          text: mensaje,
+          icon: "success"
+        });
+
+        this.router.navigate(['/finca']);
+
+      }).catch((error) => { // manejo de errores
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+
+        let mensaje = `Datos incorrectos.`;
+          Swal.fire({
+            title: "Error de auntenticación",
+            text: mensaje,
+            icon: "error"
+          });
+      });
+  }
+
   async cerrarSesionUsuario() {
     const auth = getAuth();
     signOut(auth).then(() => {
-        let mensaje = 'Cerrando sesión';
-        Swal.fire({
-          position: "top-end",
-          timerProgressBar: true,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-          title: mensaje,
-          showConfirmButton: false,
-          timer: 1500
-        }).then(() => {
-          this.router.navigate(['/']);
-        });
+      let mensaje = 'Cerrando sesión';
+      Swal.fire({
+        position: "top-end",
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+        title: mensaje,
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        this.router.navigate(['/']);
+      });
       // Sign-out successful.
     }).catch((error) => {
       // An error happened.
