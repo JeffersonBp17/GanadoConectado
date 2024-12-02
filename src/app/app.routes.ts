@@ -5,6 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { GanadoComponent } from './components/ganado/ganado.component';
 import { authGuard } from './guards/auth.guard';
 import { NoEncontradoComponent } from './components/no-encontrado/no-encontrado.component';
+import { FincaComponent } from './components/finca/finca.component';
 
 export const routes: Routes = [
     {
@@ -19,6 +20,11 @@ export const routes: Routes = [
     {
         path: "datos",
         component: DatosComponent,
+        canActivate: [authGuard]
+    },
+    {
+        path: "finca",
+        component: FincaComponent,
         canActivate: [authGuard]
     },
     {

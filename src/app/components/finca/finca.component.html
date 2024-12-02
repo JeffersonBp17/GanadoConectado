@@ -1,0 +1,64 @@
+<app-header></app-header>
+
+<div class="container" style="max-width: 600px;">
+  <h1>Datos de la Finca</h1>
+
+  <!-- Formulario para crear la finca -->
+  <form id="farm-form" (submit)="crearFinca()">
+    <label for="farm-name">Nombre de la Finca:</label>
+    <input type="text" id="farm-name" required>
+
+    <label for="type">Tipo de Ganado:</label>
+    <select id="type" (change)="onTypeChange($event)" required>
+      <option value="engorde">Ganado de Engorde</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Crear Finca</button>
+  </form>
+</div>
+
+<div class="container">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Número de Toro</th>
+        <th scope="col">Fecha de Compra</th>
+        <th scope="col">Peso de Compra (kg)</th>
+        <th scope="col">Lugar de Compra</th>
+        <th scope="col">Peso de Llegada a la Finca (kg)</th>
+        <th scope="col">Lote N°</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>1</td>
+        <td>21/10/2024</td>
+        <td>502</td>
+        <td>Subasta Muelle</td>
+        <td>501</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>4</td>
+        <td>21/09/2024</td>
+        <td>408</td>
+        <td>Subasta Tilaran</td>
+        <td>410</td>
+        <td>7</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td>55</td>
+        <td>10/11/2024</td>
+        <td>304</td>
+        <td>Camara de Ganaderos SC</td>
+        <td>409</td>
+        <td>3</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
