@@ -143,7 +143,7 @@ export class FirebaseService {
         },
         title: mensaje,
         showConfirmButton: false,
-        timer: 1500
+        timer: 1000
       }).then(() => {
         this.router.navigate(['/']);
       });
