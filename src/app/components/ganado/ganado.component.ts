@@ -1,6 +1,6 @@
 import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
 import { Livestock } from '../../types/LiveStock';
 import { FirebaseService } from '../../services/firebase.service';
 import { HeaderComponent } from "../header/header.component";
@@ -21,11 +21,11 @@ export class GanadoComponent {
   constructor(private fb: FormBuilder, private firebaseService: FirebaseService) {
     // Formulario para registrar el toro
     this.livestockForm = this.fb.group({
-      toroId: [''],
-      purchaseDate: [''],
-      purchaseWeight: [''],
-      purchaseLocation: [''],
-      batchNumber: ['']
+      toroId: ['', Validators.required],
+      purchaseDate: ['', Validators.required],
+      purchaseWeight: ['', Validators.required],
+      purchaseLocation: ['', Validators.required],
+      batchNumber: ['', Validators.required]
     });
 
     // Formulario para añadir peso y observaciones
@@ -34,6 +34,13 @@ export class GanadoComponent {
       weight: [''],
       observation: ['']
     });
+  }
+
+  cargarGanado() {
+    this.firebaseService.obtenerGanadoFinca().then((data) => {
+      console.log("Data: ", data);
+    })
+    //console.log("listaGanado: ", listaGanado);
   }
 
   // Función para agregar ganado
@@ -45,7 +52,7 @@ export class GanadoComponent {
     this.livestockList.push(newLivestock);
     this.livestockForm.reset();
 
-    this.firebaseService.agregarGanado(this.livestockList[0]);
+    this.firebaseService.crearGanado(this.livestockList[0]);
     //console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
 
     this.estadoAgregar = !this.estadoAgregar;
@@ -58,6 +65,10 @@ export class GanadoComponent {
       livestock.weightRecords.push(this.weightForm.value);
       this.weightForm.reset();
     }
+  }
+
+  cambiarEstado() {
+    this.estadoAgregar = !this.estadoAgregar;
   }
 
 }

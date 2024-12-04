@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
@@ -11,23 +11,23 @@ import { FirebaseService } from '../../services/firebase.service';
   styleUrl: './registro.component.scss'
 })
 export class RegistroComponent {
-  // se crea el formulario registroForm para el manejo de datos del registro
-  registroForm = new FormGroup({
-    // cada variable se usa para obtener el valor de cada input
-    fullname: new FormControl('', Validators.required),  // Nombre Completo
-    email: new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
-    password: new FormControl('', [Validators.required, Validators.minLength(8)])   // Contraseña
-  });
+  registroForm: FormGroup;
 
-  constructor(private router: Router, private firebaseService: FirebaseService) { }
+  constructor(private fb: FormBuilder, private router: Router, private firebaseService: FirebaseService) {
+    // se crea el formulario registroForm para el manejo de datos del registro
+    this.registroForm = this.fb.group({
+      // cada variable se usa para obtener el valor de cada input
+      Nombre: ['', Validators.required], //new FormControl('', Validators.required),  // Nombre Completo
+      Correo: ['', Validators.required], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
+      Contrasena: ['', Validators.required], //new FormControl('', [Validators.required, Validators.minLength(8)])   // Contraseña
+    });
+  }
 
   /**
    * Método para manejar la acción del botón 'Registrar'
    */
-  onSubmit() {
+  registrar() {
     console.log(this.registroForm.value);
-    this.firebaseService.registrarUsuario(this.registroForm.value);
-
-    this.router.navigate(['/finca']);
+    this.firebaseService.crearUsuario(this.registroForm.value);    
   }
 }

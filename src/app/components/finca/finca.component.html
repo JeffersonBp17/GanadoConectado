@@ -4,16 +4,19 @@
   <h1>Datos de la Finca</h1>
 
   <!-- Formulario para crear la finca -->
-  <form id="farm-form" (submit)="crearFinca()">
+  <form id="farm-form" [formGroup]="fincaForm" (submit)="crearFinca()">
     <label for="farm-name">Nombre de la Finca:</label>
-    <input type="text" id="farm-name" required>
+    <input type="text" id="farm-name" formControlName="Nombre" required>
 
     <label for="type">Tipo de Ganado:</label>
-    <select id="type" (change)="onTypeChange($event)" required>
+    <select id="type" (change)="onTypeChange($event)" formControlName="TipoGanado" required>
       <option value="engorde">Ganado de Engorde</option>
     </select>
+
+    <label for="numero-fierro">Número de Fierro:</label>
+    <input type="number" id="numero-fierro" formControlName="NumeroFierro" required>
     <br><br>
 
-    <button type="submit">Crear Finca</button>
+    <button class="btn btn-lg btn-login" type="submit">Crear Finca</button>
   </form>
 </div>

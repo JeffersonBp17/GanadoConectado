@@ -1,6 +1,6 @@
 <app-header></app-header>
 
-@if (estadoAgregar) {
+@if (!estadoAgregar) {
 <div class="container">
     <!-- Sección dinámica para gestionar ganado -->
     <div id="livestock-section">
@@ -27,49 +27,10 @@
                     <input class="form-control-lg" type="number" formControlName="batchNumber">
                 </div>
                 <br><br>
-                <button type="submit">Agregar</button>
+                <button class="btn btn-lg btn-login" type="submit">Agregar</button>
             </form>
         </div>
 
-        <!-- Listado de ganado -->
-        <div id="livestock-list">
-            <h3>Lista de Ganado</h3>
-            <ul>
-                <li *ngFor="let livestock of livestockList">
-                    <div>
-                        Número de Toro: {{ livestock.toroId }},
-                        Fecha de Compra: {{ livestock.purchaseDate }},
-                        Peso de Compra: {{ livestock.purchaseWeight }} kg,
-                        Lugar de Compra: {{ livestock.purchaseLocation }},
-                        Lote N°: {{ livestock.batchNumber }}
-                    </div>
-
-                    <!-- Formulario para registrar peso y observaciones -->
-                    <form [formGroup]="weightForm" (ngSubmit)="addWeightRecord(livestock.toroId)">
-                        <label for="date">Fecha de Peso:</label>
-                        <input type="date" formControlName="date">
-
-                        <label for="weight">Peso (kg):</label>
-                        <input type="number" formControlName="weight">
-
-                        <label for="observation">Observación:</label>
-                        <input type="text" formControlName="observation">
-                        <br><br>
-                        <button type="submit">Agregar Registro de Peso</button>
-                    </form>
-
-                    <!-- Historial de registros de peso y observaciones -->
-                    <h4>Historial de Peso y Observaciones</h4>
-                    <ul>
-                        <li *ngFor="let record of livestock.weightRecords">
-                            Fecha: {{ record.date }}, Peso: {{ record.weight }} kg, Observación: {{
-                            record.observation
-                            }}
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
     </div>
 </div>
 }
@@ -84,7 +45,7 @@
                     <h2 id="section-title">Finca La Palma</h2>
                 </div>
                 <div class="form-group col-md-4" style="margin: auto">
-                    <button class="btn btn-success btn-block" (click)="addLivestock()">
+                    <button class="btn btn-block btn-login" (click)="cambiarEstado()">
                         <i class="fa fa-plus"></i>
                         Agregar Ganado
                     </button>
@@ -112,9 +73,8 @@
                             <td>502</td>
                             <td>Subasta Muelle</td>
                             <td>501</td>
-                            <td>3</td>
                             <td style="display: flex;">
-                                <button type="button" class="btn btn-primary">Editar</button>
+                                <button type="button" class="btn btn-primary" (click)="cargarGanado()">Editar</button>
                                 <button type="button" class="btn btn-danger">Eliminar</button>
                             </td>
                         </tr>
@@ -125,7 +85,6 @@
                             <td>408</td>
                             <td>Subasta Tilaran</td>
                             <td>410</td>
-                            <td>7</td>
                             <td style="display: flex;">
                                 <button type="button" class="btn btn-primary">Editar</button>
                                 <button type="button" class="btn btn-danger">Eliminar</button>
@@ -138,7 +97,6 @@
                             <td>304</td>
                             <td>Camara de Ganaderos SC</td>
                             <td>409</td>
-                            <td>3</td>
                             <td style="display: flex;">
                                 <button type="button" class="btn btn-primary">Editar</button>
                                 <button type="button" class="btn btn-danger">Eliminar</button>

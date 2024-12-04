@@ -1,6 +1,7 @@
 import { HistorialPeso } from "./HistorialPeso"
 
 export type Ganado = {
+    IDFierroFinca: number;
     FechaCompra: Date,
     LugarCompra: string,
     NumeroLote: number,

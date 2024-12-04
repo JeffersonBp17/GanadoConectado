@@ -1,30 +1,32 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
-  // se crea el formulario loginForm para el manejo de datos email y password del login
-  loginForm = new FormGroup({
-    // cada variable se usa para obtener el valor de cada input
-    email: new FormControl(''),
-    password: new FormControl('')
-  });
+  loginForm: FormGroup;
 
-  constructor(private router: Router, private firebaseService: FirebaseService) { }
+  constructor(private fb: FormBuilder, private router: Router, private firebaseService: FirebaseService) {
+    // se crea el formulario loginForm para el manejo de datos email y password del login
+    this.loginForm = fb.group({
+      // cada variable se usa para obtener el valor de cada input
+      Correo: ['', Validators.required], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
+      Contrasena: ['', Validators.required],
+    });
+  }
 
   ngOnInit() {
     //this.obtenerDatosDB();
   }
-  
+
   obtenerDatosDB() {
     this.firebaseService.obtenerDatosDB("Usuario").then((data) => {
       console.log("Data: ", data);
@@ -51,11 +53,11 @@ export class LoginComponent {
   }
 
   openWhatsApp() {
-    const phoneNumber = '+50685075430'; 
+    const phoneNumber = '+50685075430';
     const message = encodeURIComponent('Hola, necesito ayuda con el sistema de Ganado Conectado.');
     const url = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(url, '_blank');
-}
+  }
 
 
 }
