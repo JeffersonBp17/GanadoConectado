@@ -1,5 +1,6 @@
 <app-header></app-header>
 
+@if (!estadoAgregar) {
 <div class="container" style="max-width: 600px;">
   <h1>Datos de la Finca</h1>
 
@@ -20,3 +21,51 @@
     <button class="btn btn-lg btn-login" type="submit">Crear Finca</button>
   </form>
 </div>
+}
+
+@else {
+<div class="d-flex flex-wrap justify-content-center">
+  <div class="card">
+    <div class="card-body">
+      <!-- Tabla de listado de ganado -->
+      <div class="form-row" style="display: flex;">
+        <div class="form-group col-md-8" style="margin: auto">
+          <h2 id="section-title">Lista de Fincas</h2>
+        </div>
+        <div class="form-group col-md-4" style="margin: auto">
+          <button class="btn btn-block btn-login" (click)="cambiarEstado()">
+            <i class="fa fa-plus"></i>
+            Agregar Finca
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive-sm" style="text-align: center">
+        <table class="table table-striped table-bordered table-sm">
+          <thead>
+            <tr>
+              <th scope="col">Nombre de la Finca</th>
+              <th scope="col">Tipo de Ganado</th>
+              <th scope="col">Número de Fierro</th>
+              <th scope="col">Opciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (finca of fincas; track finca) {
+            <tr>
+              <td>{{finca.Nombre}}</td>
+              <td>{{finca.TipoGanado}}</td>
+              <td>{{finca.NumeroFierro}}</td>
+              <td style="display: flex;">
+                <button type="button" class="btn btn-primary">Editar</button>
+                <button type="button" class="btn btn-danger">Eliminar</button>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+}

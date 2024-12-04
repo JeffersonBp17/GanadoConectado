@@ -85,6 +85,7 @@ export class FirebaseService {
       this.idFierro = this.getItem("IDFierroFinca") || datos.NumeroFierro;
 
       console.log("Document written with ID: ", docRef.id);
+      //this.router.navigate(['/ganado']);
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -95,13 +96,13 @@ export class FirebaseService {
    */
   async crearGanado(datos: any) {
     try {
-      console.log("Ganado: ",datos, this.getItem("IDFierroFinca"), Number (this.getItem("IDFierroFinca")), Number (this.idFierro));
+      console.log("Ganado: ", datos, this.getItem("IDFierroFinca"), Number(this.getItem("IDFierroFinca")), Number(this.idFierro));
       const [año, mes, dia] = datos.purchaseDate.split('-');
       let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
       console.log(fecha);
 
       const ganado: Ganado = {
-        IDFierroFinca: Number (this.getItem("IDFierroFinca")) || Number (this.idFierro),
+        IDFierroFinca: Number(this.getItem("IDFierroFinca")) || Number(this.idFierro),
         FechaCompra: fecha,
         LugarCompra: datos.purchaseLocation,
         NumeroLote: datos.batchNumber,
@@ -235,6 +236,20 @@ export class FirebaseService {
     });
   }
 
+  async obtenerFincasUsuario() {
+    let result: any[] = [];
+    const q = query(collection(this.initializeDb(), 'Finca'), where("IDUsuario", "==", this.getItem("UID") || this.uid));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      //console.log(doc.id, " => ", doc.data());
+      result.push(doc.data());
+    });
+
+    //console.log("Result: ", result);
+    return result;
+  }
+
   async obtenerGanadoFinca() {
     let result: any[] = [];
     const querySnapshot = await getDocs(collection(this.initializeDb(), "Ganado"));
@@ -285,7 +300,12 @@ export class FirebaseService {
 
   // Get a value from local storage
   getItem(key: string): string | null {
-    return localStorage.getItem(key);
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.log("Error:", error);
+      return null;
+    }
   }
 
   // Remove a value from local storage

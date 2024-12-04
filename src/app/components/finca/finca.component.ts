@@ -14,6 +14,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class FincaComponent {
   tipoGanado: string = 'lechero';
   fincaForm: FormGroup;
+  estadoAgregar: boolean = true;
+  fincas: any[] = [];
 
   constructor(private fb: FormBuilder, private router: Router, private firebaseService: FirebaseService) {
     // Formulario para registrar la finca
@@ -25,6 +27,13 @@ export class FincaComponent {
   }
 
   ngOnInit() {
+    //this.obtenerFincas();
+  }
+
+  obtenerFincas() {
+    this.firebaseService.obtenerFincasUsuario().then((finca) => {
+      this.fincas = finca;
+    });
   }
 
   onTypeChange(event: Event): void {
@@ -40,9 +49,10 @@ export class FincaComponent {
   crearFinca() {
     console.log("Value: ", this.fincaForm.value);
     this.firebaseService.crearFinca(this.fincaForm.value);
+    this.estadoAgregar = !this.estadoAgregar;
+  }
 
-    this.router.navigate(['/ganado']);
-    //lecheroFields.style.display = 'none';
-    //engordeFields.style.display = 'block';
+  cambiarEstado() {
+    this.estadoAgregar = !this.estadoAgregar;
   }
 }
