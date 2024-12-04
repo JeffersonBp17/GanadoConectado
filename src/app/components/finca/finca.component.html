@@ -18,7 +18,10 @@
     <input type="number" id="numero-fierro" formControlName="NumeroFierro" required>
     <br><br>
 
-    <button class="btn btn-lg btn-login" type="submit">Crear Finca</button>
+    <div class="d-grid gap-2">
+      <button class="btn btn-lg btn-login" type="submit">Crear Finca</button>
+      <button class="btn btn-lg btn-login" type="button" (click)="cambiarEstado()">Ver Fincas</button>
+    </div>
   </form>
 </div>
 }
