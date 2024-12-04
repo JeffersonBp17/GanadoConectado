@@ -100,12 +100,19 @@ export class FirebaseService {
     const provider = new GoogleAuthProvider();
     const auth = getAuth();
     signInWithPopup(auth, provider)
-      .then((result) => {
+      .then(async (result: any) => {
         console.log(result);
         // Token de acceso de Google
         const credential: any = GoogleAuthProvider.credentialFromResult(result);
         const token = credential.accessToken;
         const user = result.user;
+
+        // registrar usuario en base de datos
+        const usuario: Usuario = {
+          Nombre: result.user.displayName,
+          Correo: result.user.email,
+        };
+        await addDoc(collection(this.initializeDb(), "Usuario"), usuario);
 
         let mensaje = `Bienvenido ${result.user.displayName}!!!`;
         Swal.fire({
@@ -164,7 +171,7 @@ export class FirebaseService {
     querySnapshot.forEach((doc) => {
       dbData.push(doc.data());
     });
-
+    console.log(dbData);
     return dbData;
   }
 

@@ -23,9 +23,6 @@
                     <label for="purchase-location">Lugar de Compra:</label>
                     <input class="form-control-lg" type="text" formControlName="purchaseLocation">
 
-                    <label for="arrival-weight">Peso de Llegada a la Finca (kg):</label>
-                    <input class="form-control-lg" type="number" formControlName="arrivalWeight">
-
                     <label for="batch-number">Lote N°:</label>
                     <input class="form-control-lg" type="number" formControlName="batchNumber">
                 </div>
@@ -44,7 +41,6 @@
                         Fecha de Compra: {{ livestock.purchaseDate }},
                         Peso de Compra: {{ livestock.purchaseWeight }} kg,
                         Lugar de Compra: {{ livestock.purchaseLocation }},
-                        Peso de Llegada: {{ livestock.arrivalWeight }} kg,
                         Lote N°: {{ livestock.batchNumber }}
                     </div>
 
@@ -104,7 +100,6 @@
                             <th scope="col">Fecha de Compra</th>
                             <th scope="col">Peso de Compra (kg)</th>
                             <th scope="col">Lugar de Compra</th>
-                            <th scope="col">Peso de Llegada a la Finca (kg)</th>
                             <th scope="col">Lote N°</th>
                             <th scope="col">Opciones</th>
                         </tr>

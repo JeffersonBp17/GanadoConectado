@@ -25,9 +25,11 @@ export class LoginComponent {
     //this.obtenerDatosDB();
   }
   
-  async obtenerDatosDB() {
-    const listaGanado = await this.firebaseService.obtenerDatosDB("Usuario");
-    console.log("listaGanado: ", listaGanado);
+  obtenerDatosDB() {
+    this.firebaseService.obtenerDatosDB("Usuario").then((data) => {
+      console.log("Data: ", data);
+    })
+    //console.log("listaGanado: ", listaGanado);
   }
 
   /**

@@ -25,7 +25,6 @@ export class GanadoComponent {
       purchaseDate: [''],
       purchaseWeight: [''],
       purchaseLocation: [''],
-      arrivalWeight: [''],
       batchNumber: ['']
     });
 
