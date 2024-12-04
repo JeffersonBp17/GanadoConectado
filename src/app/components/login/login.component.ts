@@ -22,7 +22,7 @@ export class LoginComponent {
   constructor(private router: Router, private firebaseService: FirebaseService) { }
 
   ngOnInit() {
-    this.obtenerDatosDB();
+    //this.obtenerDatosDB();
   }
   
   async obtenerDatosDB() {
