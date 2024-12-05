@@ -30,8 +30,7 @@ export class FirebaseService {
     this.fincaCol = collection(this.db, 'Finca');
 
     // Get Realtime Data
-    onSnapshot(this.fincaCol, (snapshot) => {
-      console.log("ssssss", snapshot)
+    onSnapshot(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)), (snapshot) => {
       this.updatedSnapshot.next(snapshot);
     }, (err) => {
       console.log(err);
@@ -88,7 +87,6 @@ export class FirebaseService {
         IDUsuario: this.getItem("UID") || this.uid,
         NumeroFierro: datos.NumeroFierro,
       }
-      console.log("UID::", finca.IDUsuario);
       const docRef = await addDoc(collection(this.db, "Finca"), finca);
 
       this.setItem("IDFierroFinca", datos.NumeroFierro);

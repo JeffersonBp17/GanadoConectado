@@ -43,11 +43,8 @@ export class FincaComponent {
   updateFincaCollection(snapshot: QuerySnapshot<DocumentData>) {
     this.fincas = [];
     snapshot.docs.forEach((finca) => {
-      console.log("id",finca);
       this.fincas.push({ ...finca.data(), id: finca.id });
     })
-
-    console.log("123: ",this.fincas);
   }
 
   onTypeChange(event: Event): void {
@@ -64,6 +61,7 @@ export class FincaComponent {
     console.log("Value: ", this.fincaForm.value);
     this.firebaseService.crearFinca(this.fincaForm.value);
     this.estadoAgregar = !this.estadoAgregar;
+    this.fincaForm.reset();
   }
 
   cambiarEstado() {
