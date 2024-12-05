@@ -1,24 +1,30 @@
-import { NgFor } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Livestock } from '../../types/LiveStock';
 import { FirebaseService } from '../../services/firebase.service';
 import { HeaderComponent } from "../header/header.component";
+import { DocumentData, QuerySnapshot, Timestamp } from 'firebase/firestore';
+import { Ganado } from '../../types/Ganado';
+import { Finca } from '../../types/Finca';
 
 @Component({
   selector: 'app-ganado',
   standalone: true,
-  imports: [ReactiveFormsModule, NgFor, HeaderComponent],
+  imports: [ReactiveFormsModule, HeaderComponent, DatePipe],
   templateUrl: './ganado.component.html',
   styleUrl: './ganado.component.scss'
 })
-export class GanadoComponent {
+export class GanadoComponent implements OnInit {
   livestockForm: FormGroup;
   weightForm: FormGroup;
   livestockList: Livestock[] = [];
   estadoAgregar: boolean = true;
+  ganado: Ganado[] | any = [];
+  finca: any | null | undefined;
+  nombreFinca: string = '';
 
-  constructor(private fb: FormBuilder, private firebaseService: FirebaseService) {
+  constructor(private fb: FormBuilder, public firebaseService: FirebaseService) {
     // Formulario para registrar el toro
     this.livestockForm = this.fb.group({
       toroId: ['', Validators.required],
@@ -36,11 +42,41 @@ export class GanadoComponent {
     });
   }
 
-  cargarGanado() {
-    this.firebaseService.obtenerGanadoFinca().then((data) => {
-      console.log("Data: ", data);
-    })
-    //console.log("listaGanado: ", listaGanado);
+  ngOnInit(): void {
+    try {
+      const res = this.firebaseService.getItem('FincaActual');
+      this.finca = res;
+      this.finca = JSON.parse(this.finca);
+      this.nombreFinca = this.finca.Nombre;
+    } catch (error) {
+      console.log("Error:", error)
+    }
+    
+    this.obtenerGanado();
+    this.firebaseService.actualizarSnapshotGanado();
+    this.firebaseService.obsr_UpdatedSnapshot.subscribe((snapshot) => {
+      this.updateGanadoCollection(snapshot);
+    });
+  }
+
+  async obtenerGanado() {
+    const snapshot = await this.firebaseService.obtenerGanadoFinca();
+    console.log(snapshot);
+    this.updateGanadoCollection(snapshot);
+  }
+
+  updateGanadoCollection(snapshot: QuerySnapshot<DocumentData>) {
+    this.ganado = [];
+    snapshot.docs.forEach((finca) => {
+      console.log(finca.data());
+      this.ganado.push({ ...finca.data(), id: finca.id });
+    });
+  }
+
+  formatoFecha(segundos: number) {
+    const date = new Date(0);
+    date.setSeconds(segundos);
+    return date;
   }
 
   // Función para agregar ganado

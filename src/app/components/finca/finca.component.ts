@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
 import { FirebaseService } from '../../services/firebase.service';
@@ -13,7 +13,7 @@ import { Finca } from '../../types/Finca';
   templateUrl: './finca.component.html',
   styleUrl: './finca.component.scss'
 })
-export class FincaComponent {
+export class FincaComponent implements OnInit{
   tipoGanado: string = 'lechero';
   fincaForm: FormGroup;
   estadoAgregar: boolean = true;
@@ -28,7 +28,7 @@ export class FincaComponent {
     });
   }
 
-  ngAfterViewInit() {
+  ngOnInit(): void {
     this.obtenerFincas();
     this.firebaseService.actualizarSnapshotFinca();
     this.firebaseService.obsr_UpdatedSnapshot.subscribe((snapshot) => {
@@ -55,10 +55,25 @@ export class FincaComponent {
   }
 
   // Metodo para crear Finca
-  crearFinca() {
-    this.firebaseService.crearFinca(this.fincaForm.value);
-    this.estadoAgregar = !this.estadoAgregar;
-    this.fincaForm.reset();
+  async crearFinca() {
+    const val = this.firebaseService.crearFinca(this.fincaForm.value);
+    if (await val) {
+      this.estadoAgregar = !this.estadoAgregar;
+      this.fincaForm.reset();
+    }    
+  }
+
+  // Metodo para seleccionar finca
+  seleccionarFinca(finca: Finca) {
+    this.firebaseService.setItem("FincaActual", JSON.stringify(finca));
+    this.firebaseService.setItem("IDFierro", finca.NumeroFierro);
+    this.firebaseService.idFierro = finca.NumeroFierro;
+    this.router.navigate(['/ganado']);    
+  }
+
+  // Metodo para eliminar finca
+  eliminarFinca() {
+
   }
 
   // Metodo para cambiar estado agregar finca o ver fincas

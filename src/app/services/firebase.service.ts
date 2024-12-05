@@ -17,7 +17,7 @@ const app = initializeApp(environment.firebaseConfig);
 })
 export class FirebaseService {
   public uid: string = ''; // ID de usuario
-  public idFierro: string = ''
+  public idFierro: number = 0; // Numero de Fierro actual
 
   db: Firestore;
   usuarioCol: CollectionReference<DocumentData>;
@@ -34,10 +34,25 @@ export class FirebaseService {
     this.ganadoCol = collection(this.db, 'Ganado');
   }
 
+  // Metodo para actualizar lista de fincas en tiempo real
   actualizarSnapshotFinca() {
     try {
       // Obtener datos en tiempo real
       onSnapshot(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)), (snapshot) => {
+        this.updatedSnapshot.next(snapshot);
+      }, (err) => {
+        console.log(err);
+      });
+    } catch (error) {
+      console.log("Error: ", error)
+    }
+  }
+
+  // Metodo para actualizar lista de ganado en tiempo real
+  actualizarSnapshotGanado() {
+    try {
+      // Obtener datos en tiempo real
+      onSnapshot(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))), (snapshot) => {
         this.updatedSnapshot.next(snapshot);
       }, (err) => {
         console.log(err);
@@ -89,23 +104,44 @@ export class FirebaseService {
    * Función para agregar Finca
    * @param datos 
    */
-  async crearFinca(datos: any) {
+  async crearFinca(datos: any): Promise<boolean> {
     try {
-      const finca: Finca = {
-        Nombre: datos.Nombre,
-        TipoGanado: datos.TipoGanado,
-        IDUsuario: this.getItem("UID") || this.uid,
-        NumeroFierro: datos.NumeroFierro,
+      // Validar si ya existe una finca con el numero de fierro
+      const q = query(this.fincaCol, where("NumeroFierro", "==", datos.NumeroFierro));
+      const querySnapshot = await getDocs(q);
+      let result: any[] = [];
+      querySnapshot.forEach((doc) => {
+        result.push(doc.data());
+      });
+
+      if (result.length < 1) {
+        const finca: Finca = {
+          Nombre: datos.Nombre,
+          TipoGanado: datos.TipoGanado,
+          IDUsuario: this.getItem("UID") || this.uid,
+          NumeroFierro: datos.NumeroFierro,
+        }
+        const docRef = await addDoc(this.fincaCol, finca);
+        let mensaje = `Finca creada exitosamente, fierro número ${datos.NumeroFierro}.`;
+        Swal.fire({
+          title: "Éxito",
+          text: mensaje,
+          icon: "success"
+        });
+        console.log("Document written with ID: ", docRef.id);
+        return true;
+      } else {
+        let mensaje = `Ya existe una Finca con el numero de fierro ${result[0].NumeroFierro}.`;
+        Swal.fire({
+          title: "Error al agregar Finca",
+          text: mensaje,
+          icon: "error"
+        });
+        return false
       }
-      const docRef = await addDoc(this.fincaCol, finca);
-
-      this.setItem("IDFierroFinca", datos.NumeroFierro);
-      this.idFierro = this.getItem("IDFierroFinca") || datos.NumeroFierro;
-
-      console.log("Document written with ID: ", docRef.id);
-      //this.router.navigate(['/ganado']);
     } catch (e) {
       console.error("Error adding document: ", e);
+      return false;
     }
   }
 
@@ -114,13 +150,12 @@ export class FirebaseService {
    */
   async crearGanado(datos: any) {
     try {
-      console.log("Ganado: ", datos, this.getItem("IDFierroFinca"), Number(this.getItem("IDFierroFinca")), Number(this.idFierro));
       const [año, mes, dia] = datos.purchaseDate.split('-');
       let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
       console.log(fecha);
 
       const ganado: Ganado = {
-        IDFierroFinca: Number(this.getItem("IDFierroFinca")) || Number(this.idFierro),
+        IDFierroFinca: Number(this.getItem("IDFierro")) || Number(this.idFierro),
         FechaCompra: fecha,
         LugarCompra: datos.purchaseLocation,
         NumeroLote: datos.batchNumber,
@@ -259,13 +294,9 @@ export class FirebaseService {
   }
 
   async obtenerGanadoFinca() {
-    let result: any[] = [];
-    const querySnapshot = await getDocs(this.ganadoCol);
-    querySnapshot.forEach((doc) => {
-      result.push(doc.data());
-    });
-    console.log(result);
-    return result;
+    console.log((this.getItem('IDFierro') || this.idFierro));
+    const snapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))));
+    return snapshot;
   }
 
   /**

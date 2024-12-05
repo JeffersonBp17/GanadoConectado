@@ -60,8 +60,8 @@
               <td>{{finca.TipoGanado}}</td>
               <td>{{finca.NumeroFierro}}</td>
               <td style="display: flex;">
-                <button type="button" class="btn btn-primary">Ver</button>
-                <button type="button" class="btn btn-danger">Eliminar</button>
+                <button type="button" class="btn btn-primary" (click)="seleccionarFinca(finca)">Ver</button>
+                <button type="button" class="btn btn-danger" (click)="eliminarFinca()">Eliminar</button>
               </td>
             </tr>
             }
