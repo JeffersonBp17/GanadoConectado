@@ -20,21 +20,31 @@ export class FirebaseService {
   public idFierro: string = ''
 
   db: Firestore;
-  fincaCol: CollectionReference<DocumentData>;
+  usuarioCol: CollectionReference<DocumentData>;
+  fincaCol: CollectionReference<DocumentData>; // para manejar la tabla/coleccion de fincas
+  ganadoCol: CollectionReference<DocumentData>;
   private updatedSnapshot = new Subject<QuerySnapshot<DocumentData>>();
   obsr_UpdatedSnapshot = this.updatedSnapshot.asObservable();
 
-  constructor(private router: Router) { 
+  constructor(private router: Router) {
     initializeApp(environment.firebaseConfig);
     this.db = getFirestore();
+    this.usuarioCol = collection(this.db, 'Usuario');
     this.fincaCol = collection(this.db, 'Finca');
+    this.ganadoCol = collection(this.db, 'Ganado');
+  }
 
-    // Get Realtime Data
-    onSnapshot(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)), (snapshot) => {
-      this.updatedSnapshot.next(snapshot);
-    }, (err) => {
-      console.log(err);
-    })
+  actualizarSnapshotFinca() {
+    try {
+      // Obtener datos en tiempo real
+      onSnapshot(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)), (snapshot) => {
+        this.updatedSnapshot.next(snapshot);
+      }, (err) => {
+        console.log(err);
+      });
+    } catch (error) {
+      console.log("Error: ", error)
+    }
   }
 
   /**
@@ -51,7 +61,7 @@ export class FirebaseService {
         Correo: datos.Correo,
         Contrasena: datos.Contrasena,
       };
-      const docRef = await addDoc(collection(this.db, "Usuario"), usuario);
+      const docRef = await addDoc(this.usuarioCol, usuario);
       console.log("Document written with ID: ", docRef.id);
 
       // registro de usuario en autenticacion
@@ -87,7 +97,7 @@ export class FirebaseService {
         IDUsuario: this.getItem("UID") || this.uid,
         NumeroFierro: datos.NumeroFierro,
       }
-      const docRef = await addDoc(collection(this.db, "Finca"), finca);
+      const docRef = await addDoc(this.fincaCol, finca);
 
       this.setItem("IDFierroFinca", datos.NumeroFierro);
       this.idFierro = this.getItem("IDFierroFinca") || datos.NumeroFierro;
@@ -117,7 +127,7 @@ export class FirebaseService {
         NumeroToro: datos.toroId,
         PesoCompra: datos.purchaseWeight,
       }
-      const docRef = await addDoc(collection(this.db, "Ganado"), ganado);
+      const docRef = await addDoc(this.ganadoCol, ganado);
 
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -196,7 +206,7 @@ export class FirebaseService {
             Nombre: userCredential.user.displayName,
             Correo: userCredential.user.email,
           };
-          await addDoc(collection(this.db, "Usuario"), usuario);
+          await addDoc(this.usuarioCol, usuario);
         }
         let mensaje = `Bienvenido ${userCredential.user.displayName}!!!`;
         Swal.fire({
@@ -250,7 +260,7 @@ export class FirebaseService {
 
   async obtenerGanadoFinca() {
     let result: any[] = [];
-    const querySnapshot = await getDocs(collection(this.db, "Ganado"));
+    const querySnapshot = await getDocs(this.ganadoCol);
     querySnapshot.forEach((doc) => {
       result.push(doc.data());
     });
@@ -281,8 +291,6 @@ export class FirebaseService {
     const q = query(collection(this.db, collectionName), where("Correo", "==", email));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      console.log(doc.id, " => ", doc.data());
       result.push(doc.data());
     });
 

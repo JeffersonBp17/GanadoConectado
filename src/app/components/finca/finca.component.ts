@@ -28,11 +28,12 @@ export class FincaComponent {
     });
   }
 
-  ngOnInit() {
+  ngAfterViewInit() {
     this.obtenerFincas();
+    this.firebaseService.actualizarSnapshotFinca();
     this.firebaseService.obsr_UpdatedSnapshot.subscribe((snapshot) => {
       this.updateFincaCollection(snapshot);
-    })
+    });
   }
 
   async obtenerFincas() {
@@ -44,26 +45,23 @@ export class FincaComponent {
     this.fincas = [];
     snapshot.docs.forEach((finca) => {
       this.fincas.push({ ...finca.data(), id: finca.id });
-    })
+    });
   }
 
   onTypeChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const type = selectElement.value;
-    console.log('Tipo seleccionado:', type);
     this.tipoGanado = type;
-    // Aquí puedes agregar la lógica que necesites según el valor seleccionado.
-    //const type = this.typeSelect.value;
   }
 
   // Metodo para crear Finca
   crearFinca() {
-    console.log("Value: ", this.fincaForm.value);
     this.firebaseService.crearFinca(this.fincaForm.value);
     this.estadoAgregar = !this.estadoAgregar;
     this.fincaForm.reset();
   }
 
+  // Metodo para cambiar estado agregar finca o ver fincas
   cambiarEstado() {
     this.estadoAgregar = !this.estadoAgregar;
   }
