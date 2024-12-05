@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators, FormsModule } from '@angular/forms';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { FirebaseService } from '../../services/firebase.service';
 
 @Component({
@@ -21,10 +20,6 @@ export class LoginComponent {
       Correo: ['', Validators.required], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
       Contrasena: ['', Validators.required],
     });
-  }
-
-  ngOnInit() {
-    //this.obtenerDatosDB();
   }
 
   obtenerDatosDB() {

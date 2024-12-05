@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { environment } from '../../environments/environment';
-import { collection, getDocs, addDoc, getFirestore, query, where } from "firebase/firestore"; // conexion base de datos
+import { collection, getDocs, addDoc, getFirestore, query, where, CollectionReference, DocumentData, QuerySnapshot, Firestore, onSnapshot } from "firebase/firestore"; // conexion base de datos
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Usuario } from '../types/Usuario';
 import { Ganado } from '../types/Ganado';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Finca } from '../types/Finca';
+import { Subject } from 'rxjs';
 
 const app = initializeApp(environment.firebaseConfig);
 
@@ -16,17 +17,25 @@ const app = initializeApp(environment.firebaseConfig);
 })
 export class FirebaseService {
   public uid: string = ''; // ID de usuario
-  public idFierro: string = ';'
+  public idFierro: string = ''
 
-  constructor(private router: Router) { }
+  db: Firestore;
+  fincaCol: CollectionReference<DocumentData>;
+  private updatedSnapshot = new Subject<QuerySnapshot<DocumentData>>();
+  obsr_UpdatedSnapshot = this.updatedSnapshot.asObservable();
 
-  /**
-   * Función para inicializar la conexión con la base de datos
-   * @returns retorna la conexión
-   */
-  private initializeDb() {
-    const db = getFirestore(app);
-    return db;
+  constructor(private router: Router) { 
+    initializeApp(environment.firebaseConfig);
+    this.db = getFirestore();
+    this.fincaCol = collection(this.db, 'Finca');
+
+    // Get Realtime Data
+    onSnapshot(this.fincaCol, (snapshot) => {
+      console.log("ssssss", snapshot)
+      this.updatedSnapshot.next(snapshot);
+    }, (err) => {
+      console.log(err);
+    })
   }
 
   /**
@@ -43,7 +52,7 @@ export class FirebaseService {
         Correo: datos.Correo,
         Contrasena: datos.Contrasena,
       };
-      const docRef = await addDoc(collection(this.initializeDb(), "Usuario"), usuario);
+      const docRef = await addDoc(collection(this.db, "Usuario"), usuario);
       console.log("Document written with ID: ", docRef.id);
 
       // registro de usuario en autenticacion
@@ -79,7 +88,8 @@ export class FirebaseService {
         IDUsuario: this.getItem("UID") || this.uid,
         NumeroFierro: datos.NumeroFierro,
       }
-      const docRef = await addDoc(collection(this.initializeDb(), "Finca"), finca);
+      console.log("UID::", finca.IDUsuario);
+      const docRef = await addDoc(collection(this.db, "Finca"), finca);
 
       this.setItem("IDFierroFinca", datos.NumeroFierro);
       this.idFierro = this.getItem("IDFierroFinca") || datos.NumeroFierro;
@@ -109,7 +119,7 @@ export class FirebaseService {
         NumeroToro: datos.toroId,
         PesoCompra: datos.purchaseWeight,
       }
-      const docRef = await addDoc(collection(this.initializeDb(), "Ganado"), ganado);
+      const docRef = await addDoc(collection(this.db, "Ganado"), ganado);
 
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -188,7 +198,7 @@ export class FirebaseService {
             Nombre: userCredential.user.displayName,
             Correo: userCredential.user.email,
           };
-          await addDoc(collection(this.initializeDb(), "Usuario"), usuario);
+          await addDoc(collection(this.db, "Usuario"), usuario);
         }
         let mensaje = `Bienvenido ${userCredential.user.displayName}!!!`;
         Swal.fire({
@@ -218,7 +228,6 @@ export class FirebaseService {
     signOut(auth).then(() => {
       let mensaje = 'Cerrando sesión';
       Swal.fire({
-        position: "top-end",
         timerProgressBar: true,
         didOpen: () => {
           Swal.showLoading();
@@ -237,22 +246,13 @@ export class FirebaseService {
   }
 
   async obtenerFincasUsuario() {
-    let result: any[] = [];
-    const q = query(collection(this.initializeDb(), 'Finca'), where("IDUsuario", "==", this.getItem("UID") || this.uid));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      //console.log(doc.id, " => ", doc.data());
-      result.push(doc.data());
-    });
-
-    //console.log("Result: ", result);
-    return result;
+    const snapshot = await getDocs(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)));
+    return snapshot;
   }
 
   async obtenerGanadoFinca() {
     let result: any[] = [];
-    const querySnapshot = await getDocs(collection(this.initializeDb(), "Ganado"));
+    const querySnapshot = await getDocs(collection(this.db, "Ganado"));
     querySnapshot.forEach((doc) => {
       result.push(doc.data());
     });
@@ -267,7 +267,7 @@ export class FirebaseService {
    */
   async obtenerDatosDB(collectionName: string) {
     let result: any[] = [];
-    const querySnapshot = await getDocs(collection(this.initializeDb(), collectionName));
+    const querySnapshot = await getDocs(collection(this.db, collectionName));
     querySnapshot.forEach((doc) => {
       result.push(doc.data());
     });
@@ -280,7 +280,7 @@ export class FirebaseService {
    */
   async buscarUsuario(collectionName: string, email: string) {
     let result: any[] = [];
-    const q = query(collection(this.initializeDb(), collectionName), where("Correo", "==", email));
+    const q = query(collection(this.db, collectionName), where("Correo", "==", email));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots

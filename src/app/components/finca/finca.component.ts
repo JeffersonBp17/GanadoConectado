@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
 import { FirebaseService } from '../../services/firebase.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DocumentData, QuerySnapshot } from 'firebase/firestore';
+import { Finca } from '../../types/Finca';
 
 @Component({
   selector: 'app-finca',
@@ -15,7 +17,7 @@ export class FincaComponent {
   tipoGanado: string = 'lechero';
   fincaForm: FormGroup;
   estadoAgregar: boolean = true;
-  fincas: any[] = [];
+  fincas: Finca[] | any = [];
 
   constructor(private fb: FormBuilder, private router: Router, private firebaseService: FirebaseService) {
     // Formulario para registrar la finca
@@ -27,13 +29,25 @@ export class FincaComponent {
   }
 
   ngOnInit() {
-    //this.obtenerFincas();
+    this.obtenerFincas();
+    this.firebaseService.obsr_UpdatedSnapshot.subscribe((snapshot) => {
+      this.updateFincaCollection(snapshot);
+    })
   }
 
-  obtenerFincas() {
-    this.firebaseService.obtenerFincasUsuario().then((finca) => {
-      this.fincas = finca;
-    });
+  async obtenerFincas() {
+    const snapshot = await this.firebaseService.obtenerFincasUsuario();
+    this.updateFincaCollection(snapshot);
+  }
+
+  updateFincaCollection(snapshot: QuerySnapshot<DocumentData>) {
+    this.fincas = [];
+    snapshot.docs.forEach((finca) => {
+      console.log("id",finca);
+      this.fincas.push({ ...finca.data(), id: finca.id });
+    })
+
+    console.log("123: ",this.fincas);
   }
 
   onTypeChange(event: Event): void {
