@@ -22,13 +22,6 @@ export class LoginComponent {
     });
   }
 
-  obtenerDatosDB() {
-    this.firebaseService.obtenerDatosDB("Usuario").then((data) => {
-      console.log("Data: ", data);
-    });
-    //console.log("listaGanado: ", listaGanado);
-  }
-
   /**
    * Método para iniciar sesión con Google
    */

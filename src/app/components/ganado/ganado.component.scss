@@ -1,6 +1,4 @@
-.container {
-    max-width: 600px;
-}
+
 
 input {
     background-color: #f1f8e9;
@@ -8,7 +6,12 @@ input {
 }
 
 .card {
+    margin: 50px auto;
+    padding: 20px;
     background: rgba(255, 255, 255, 0.8);
+    border: initial;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);    
 }
 
 .btn-login {
@@ -18,4 +21,13 @@ input {
 
 .btn-login:hover {
     background-color: #00796b;
+}
+
+.btn-outline-success {
+    color: #009688;
+}
+
+.btn-outline-success:hover {
+    background-color: #00796b;
+    color: white;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { environment } from '../../environments/environment';
-import { collection, getDocs, addDoc, getFirestore, query, where, CollectionReference, DocumentData, QuerySnapshot, Firestore, onSnapshot } from "firebase/firestore"; // conexion base de datos
+import { collection, getDocs, addDoc, getFirestore, query, where, CollectionReference, DocumentData, QuerySnapshot, Firestore, onSnapshot, DocumentReference, doc, deleteDoc } from "firebase/firestore"; // conexion base de datos
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Usuario } from '../types/Usuario';
 import { Ganado } from '../types/Ganado';
@@ -20,9 +20,13 @@ export class FirebaseService {
   public idFierro: number = 0; // Numero de Fierro actual
 
   db: Firestore;
-  usuarioCol: CollectionReference<DocumentData>;
-  fincaCol: CollectionReference<DocumentData>; // para manejar la tabla/coleccion de fincas
-  ganadoCol: CollectionReference<DocumentData>;
+  usuarioCol: CollectionReference<DocumentData>; // consulta db usuario
+  fincaCol: CollectionReference<DocumentData>; // consulta para manejar la tabla/coleccion de fincas
+  ganadoCol: CollectionReference<DocumentData>; // consulta db ganado 
+
+  //fincaDoc: DocumentReference<DocumentData>;
+  //ganadoDoc: DocumentReference<DocumentData>;
+
   private updatedSnapshot = new Subject<QuerySnapshot<DocumentData>>();
   obsr_UpdatedSnapshot = this.updatedSnapshot.asObservable();
 
@@ -32,6 +36,9 @@ export class FirebaseService {
     this.usuarioCol = collection(this.db, 'Usuario');
     this.fincaCol = collection(this.db, 'Finca');
     this.ganadoCol = collection(this.db, 'Ganado');
+
+    //this.fincaDoc = doc(this.db, 'Finca');
+    //this.ganadoDoc = doc(this.db, 'ganado');
   }
 
   // Metodo para actualizar lista de fincas en tiempo real
@@ -148,25 +155,47 @@ export class FirebaseService {
   /**
    * Función para agregar datos a base de datos
    */
-  async crearGanado(datos: any) {
+  async crearGanado(datos: any): Promise<boolean> {
     try {
-      const [año, mes, dia] = datos.purchaseDate.split('-');
-      let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
-      console.log(fecha);
-
-      const ganado: Ganado = {
-        IDFierroFinca: Number(this.getItem("IDFierro")) || Number(this.idFierro),
-        FechaCompra: fecha,
-        LugarCompra: datos.purchaseLocation,
-        NumeroLote: datos.batchNumber,
-        NumeroToro: datos.toroId,
-        PesoCompra: datos.purchaseWeight,
+      // Validar si ya existe un toro con el numero de Toro
+      const q = query(this.ganadoCol, where("NumeroToro", "==", datos.toroId));
+      const querySnapshot = await getDocs(q);
+      let result: any[] = [];
+      querySnapshot.forEach((doc) => {
+        result.push(doc.data());
+      });
+      if (result.length < 1) {
+        const [año, mes, dia] = datos.purchaseDate.split('-');
+        let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+        const ganado: Ganado = {
+          IDFierroFinca: Number(this.getItem("IDFierro")) || Number(this.idFierro),
+          FechaCompra: fecha,
+          LugarCompra: datos.purchaseLocation,
+          NumeroLote: datos.batchNumber,
+          NumeroToro: datos.toroId,
+          PesoCompra: datos.purchaseWeight,
+        }
+        const docRef = await addDoc(this.ganadoCol, ganado);
+        let mensaje = `Toro agregado exitosamente, toro número ${datos.toroId}.`;
+        Swal.fire({
+          title: "Éxito",
+          text: mensaje,
+          icon: "success"
+        });
+        console.log("Document written with ID: ", docRef.id);
+        return true;
+      } else {
+        let mensaje = `Ya existe el Toro número ${result[0].NumeroToro}.`;
+        Swal.fire({
+          title: "Error al agregar Toro",
+          text: mensaje,
+          icon: "error"
+        });
+        return false;
       }
-      const docRef = await addDoc(this.ganadoCol, ganado);
-
-      console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
+      return false;
     }
   }
 
@@ -181,7 +210,7 @@ export class FirebaseService {
       signInWithEmailAndPassword(auth, datos.Correo, datos.Contrasena)
         .then(async (userCredential: any) => {
           console.log(userCredential);
-          let result = await this.buscarUsuario("Usuario", userCredential.user.email);
+          let result = await this.buscarUsuario(userCredential.user.email);
           // guardar en localstorage
           this.setItem("Usuario", JSON.stringify(result[0]));
           this.setItem("UID", userCredential.user.uid);
@@ -228,13 +257,11 @@ export class FirebaseService {
         const token = credential.accessToken;
         const user = userCredential.user;
 
-        let result = await this.buscarUsuario("Usuario", userCredential.user.email);
+        let result = await this.buscarUsuario(userCredential.user.email);
         // guardar en localstorage
         this.setItem("Usuario", JSON.stringify(result[0]));
         this.setItem("UID", userCredential.user.uid);
         this.uid = this.getItem("UID") || userCredential.user.uid;
-
-        console.log("RES: ", result, result.length);
         // registrar usuario en base de datos
         if (result.length < 1) {
           const usuario: Usuario = {
@@ -288,47 +315,58 @@ export class FirebaseService {
     });
   }
 
+  // Función para obtener las fincas del usuario
   async obtenerFincasUsuario() {
     const snapshot = await getDocs(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)));
     return snapshot;
   }
 
+  // Función para obtener ganado de la finca seleccionada
   async obtenerGanadoFinca() {
-    console.log((this.getItem('IDFierro') || this.idFierro));
     const snapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))));
     return snapshot;
   }
 
   /**
-   * Funcion para obtener datos de la base de datos
-   * @param collectionName variable para especificar nombre del collection en bd
-   * @returns retorna la lista de datos
+   * Funcion para eliminar finca seleccionada
    */
-  async obtenerDatosDB(collectionName: string) {
-    let result: any[] = [];
-    const querySnapshot = await getDocs(collection(this.db, collectionName));
-    querySnapshot.forEach((doc) => {
-      result.push(doc.data());
-    });
-    console.log(result);
-    return result;
+  async eliminarFinca(NumeroFierro: any) {
+    const finca = await this.buscarFinca(NumeroFierro);
+    console.log(finca);
+    const snapshot = await deleteDoc(doc(this.db, 'Finca', `${finca}`));
+    return snapshot;
+  }
+
+  /**
+   * Funcion para eliminar ganado seleccionado
+   */
+  eliminarGanado(idGanado: any) {
+
   }
 
   /**
    * Funcion para buscar usuario
    */
-  async buscarUsuario(collectionName: string, email: string) {
+  async buscarUsuario(email: string) {
     let result: any[] = [];
-    const q = query(collection(this.db, collectionName), where("Correo", "==", email));
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
+    const snapshot = await getDocs(query(this.usuarioCol, where("Correo", "==", email)));
+    snapshot.forEach((doc) => {
       result.push(doc.data());
     });
-
-    console.log("Result: ", result);
     return result;
   }
 
+  /**
+   * Funcion para buscar finca
+   */
+  async buscarFinca(NumeroFierro: any) {
+    let result;
+    const snapshot = await getDocs(query(this.fincaCol, where('NumeroFierro', '==', NumeroFierro)));
+    snapshot.forEach((doc) => {
+      result = doc.id;
+    });
+    return result;
+  }
 
   // Set a value in local storage
   setItem(key: string, value: any): void {

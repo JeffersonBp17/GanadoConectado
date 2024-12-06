@@ -1,19 +1,21 @@
-<div class="header-st">
-    <header
-        class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-        <div class="col-md-3 mb-2 mb-md-0 d-flex justify-content-center">
-            <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-                <img src="Logo.jpg" width="50" />
-            </a>
-        </div>
+<header
+    class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom header-st">
+    <div class="col-md-3 mb-2 mb-md-0 d-flex justify-content-center">
+        <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+            <img src="Logo.jpg" width="50" />
+        </a>
+    </div>
 
-        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="/" class="nav-link px-2 link-secondary">Inicio</a></li>
-            <li><a href="/finca" class="nav-link px-2">Finca</a></li>            
-        </ul>
+    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+        <li><a href="/" class="nav-link px-2 link-secondary">
+                <h4>Inicio</h4>
+            </a></li>
+        <li><a href="/finca" class="nav-link px-2 appColor">
+                <h4>Fincas</h4>
+            </a></li>
+    </ul>
 
-        <div class="col-md-3 text-end d-flex justify-content-center">
-            <button type="button" (click)="logOut()" class="btn btn-outline-danger">Cerrar Sesión</button>
-        </div>
-    </header>
-</div>
+    <div class="col-md-3 text-end d-flex justify-content-center">
+        <button type="button" (click)="logOut()" class="btn btn-outline-danger">Cerrar Sesión</button>
+    </div>
+</header>

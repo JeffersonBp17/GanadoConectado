@@ -72,8 +72,9 @@ export class FincaComponent implements OnInit{
   }
 
   // Metodo para eliminar finca
-  eliminarFinca() {
-
+  async eliminarFinca(NumeroFierro: any) {
+    const res = await this.firebaseService.eliminarFinca(NumeroFierro);
+    console.log(res);
   }
 
   // Metodo para cambiar estado agregar finca o ver fincas

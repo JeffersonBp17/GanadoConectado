@@ -2,15 +2,15 @@
 
 @if (!estadoAgregar) {
 <div class="container">
-    <!-- Sección dinámica para gestionar ganado -->
-    <div id="livestock-section">
-        <h2 id="section-title">Gestión de Ganado</h2>
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="card" style="max-width: 600px;">
+            <div class="card-body">
+                <!-- Sección dinámica para gestionar ganado -->
+                <h2 id="section-title">Gestión de Ganado</h2>
 
-        <!-- Formulario para agregar ganado -->
-        <div id="add-livestock">
-            <h3>Añadir Ganado</h3>
-            <form [formGroup]="livestockForm" (ngSubmit)="addLivestock()">
-                <div id="purchase-fields">
+                <!-- Formulario para agregar ganado -->
+                <h3>Añadir Ganado</h3>
+                <form [formGroup]="ganadoForm" (ngSubmit)="crearGanado()">
                     <label for="toro-id">Número de Toro:</label>
                     <input class="form-control-lg" type="number" formControlName="toroId">
 
@@ -25,64 +25,68 @@
 
                     <label for="batch-number">Lote N°:</label>
                     <input class="form-control-lg" type="number" formControlName="batchNumber">
-                </div>
-                <br><br>
-                <button class="btn btn-lg btn-login" type="submit">Agregar</button>
-            </form>
+                    <br><br>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-lg btn-login" type="submit">Agregar</button>
+                        <button class="btn btn-lg btn-outline-success" type="button" (click)="cambiarEstado()">Ver
+                            Ganado</button>
+                    </div>
+                </form>
+            </div>
         </div>
-
     </div>
 </div>
 }
 
 @else {
-<div class="d-flex flex-wrap justify-content-center">
-    <div class="card">
-        <div class="card-body">
-            <!-- Tabla de listado de ganado -->
-            <div class="form-row" style="display: flex;">
-                <div class="form-group col-md-8" style="margin: auto">
-                    <h2 id="section-title">Ganado: Finca {{nombreFinca}}</h2>
+<div class="container">
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="card">
+            <div class="card-body">
+                <!-- Tabla de listado de ganado -->
+                <div class="form-row" style="display: flex;">
+                    <div class="form-group col-md-8" style="margin: auto">
+                        <h3 id="section-title">Lista de Ganado: Finca {{nombreFinca}}</h3>
+                    </div>
+                    <div class="form-group col-md-4" style="margin: auto">
+                        <button class="btn btn-block btn-login" (click)="cambiarEstado()">
+                            <i class="fa fa-plus"></i>
+                            Agregar Ganado
+                        </button>
+                    </div>
                 </div>
-                <div class="form-group col-md-4" style="margin: auto">
-                    <button class="btn btn-block btn-login" (click)="cambiarEstado()">
-                        <i class="fa fa-plus"></i>
-                        Agregar Ganado
-                    </button>
-                </div>
-            </div>
 
-            <div class="table-responsive-sm" style="text-align: center">
-                <table class="table table-striped table-bordered table-sm">
-                    <thead>
-                        <tr>
-                            <th scope="col">Número de Toro</th>
-                            <th scope="col">Fecha de Compra</th>
-                            <th scope="col">Peso de Compra (kg)</th>
-                            <th scope="col">Lugar de Compra</th>
-                            <th scope="col">Lote N°</th>
-                            <th scope="col">Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (item of ganado; track ganado) {
-                        <tr>
-                            <td>{{item.NumeroToro}}</td>
-                            <td>{{formatoFecha(item.FechaCompra.seconds) | date:'dd/MM/yyyy'}}</td>
-                            <td>{{item.PesoCompra}}</td>
-                            <td>{{item.LugarCompra}}</td>
-                            <td>{{item.NumeroLote}}</td>
-                            <td style="display: flex;">
-                                <button type="button" class="btn btn-primary">Editar</button>
-                                <button type="button" class="btn btn-danger">Eliminar</button>
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+                <div class="table-responsive-sm" style="text-align: center">
+                    <table class="table table-striped table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Número de Toro</th>
+                                <th scope="col">Fecha de Compra</th>
+                                <th scope="col">Peso de Compra (kg)</th>
+                                <th scope="col">Lugar de Compra</th>
+                                <th scope="col">Lote N°</th>
+                                <th scope="col">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of ganado; track item.id) {
+                            <tr>
+                                <td>{{item.NumeroToro}}</td>
+                                <td>{{formatoFecha(item.FechaCompra.seconds) | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.PesoCompra}}</td>
+                                <td>{{item.LugarCompra}}</td>
+                                <td>{{item.NumeroLote}}</td>
+                                <td style="display: flex;">
+                                    <button type="button" class="btn btn-primary">Editar</button>
+                                    <button type="button" class="btn btn-danger">Eliminar</button>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
 }

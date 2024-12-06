@@ -16,7 +16,7 @@ import { Finca } from '../../types/Finca';
   styleUrl: './ganado.component.scss'
 })
 export class GanadoComponent implements OnInit {
-  livestockForm: FormGroup;
+  ganadoForm: FormGroup;
   weightForm: FormGroup;
   livestockList: Livestock[] = [];
   estadoAgregar: boolean = true;
@@ -26,7 +26,7 @@ export class GanadoComponent implements OnInit {
 
   constructor(private fb: FormBuilder, public firebaseService: FirebaseService) {
     // Formulario para registrar el toro
-    this.livestockForm = this.fb.group({
+    this.ganadoForm = this.fb.group({
       toroId: ['', Validators.required],
       purchaseDate: ['', Validators.required],
       purchaseWeight: ['', Validators.required],
@@ -51,7 +51,7 @@ export class GanadoComponent implements OnInit {
     } catch (error) {
       console.log("Error:", error)
     }
-    
+
     this.obtenerGanado();
     this.firebaseService.actualizarSnapshotGanado();
     this.firebaseService.obsr_UpdatedSnapshot.subscribe((snapshot) => {
@@ -67,10 +67,11 @@ export class GanadoComponent implements OnInit {
 
   updateGanadoCollection(snapshot: QuerySnapshot<DocumentData>) {
     this.ganado = [];
-    snapshot.docs.forEach((finca) => {
-      console.log(finca.data());
-      this.ganado.push({ ...finca.data(), id: finca.id });
+    snapshot.docs.forEach((ganado) => {
+      console.log(ganado.data());
+      this.ganado.push({ ...ganado.data(), id: ganado.id });
     });
+    console.log(this.ganado);
   }
 
   formatoFecha(segundos: number) {
@@ -80,18 +81,12 @@ export class GanadoComponent implements OnInit {
   }
 
   // Función para agregar ganado
-  addLivestock() {
-    const newLivestock: Livestock = {
-      ...this.livestockForm.value,
-      weightRecords: [] // Inicializa un array vacío para los registros de peso
-    };
-    this.livestockList.push(newLivestock);
-    this.livestockForm.reset();
-
-    this.firebaseService.crearGanado(this.livestockList[0]);
-    //console.log(this.livestockList,this.livestockList[0], this.livestockForm.value);
-
-    this.estadoAgregar = !this.estadoAgregar;
+  async crearGanado() {
+    const val = this.firebaseService.crearGanado(this.ganadoForm.value);
+    if (await val) {
+      this.estadoAgregar = !this.estadoAgregar;
+      this.ganadoForm.reset()
+    }    
   }
 
   // Función para agregar un registro de peso y observación a un toro específico
