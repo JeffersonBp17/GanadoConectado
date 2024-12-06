@@ -223,7 +223,7 @@ export class FirebaseService {
   actualizarSnapshotGanado() {
     try {
       // Obtener datos en tiempo real
-      onSnapshot(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)), orderBy("NumeroToro")), (snapshot) => {
+      onSnapshot(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))), (snapshot) => {
         this.updatedSnapshot.next(snapshot);
       }, (err) => {
         console.log(err);
@@ -256,7 +256,7 @@ export class FirebaseService {
 
   // Función para obtener ganado de la finca seleccionada
   async obtenerGanadoFinca() {
-    const snapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)), orderBy("NumeroToro")));
+    const snapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))));
     return snapshot;
   }
 
