@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { ApplicationRef, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
 import { FirebaseService } from '../../services/firebase.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DocumentData, QuerySnapshot } from 'firebase/firestore';
 import { Finca } from '../../types/Finca';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-finca',
@@ -25,6 +26,16 @@ export class FincaComponent implements OnInit{
       Nombre: ['', Validators.required],
       TipoGanado: ['', Validators.required],
       NumeroFierro: ['', Validators.required],
+    });
+
+    const applicationRef = inject(ApplicationRef);
+    applicationRef.isStable.pipe( first((isStable) => isStable) ).subscribe(() => {
+      // Note that we don't need to use `runOutsideAngular` because `isStable`
+      // emits events outside of the Angular zone when it's truthy (falsy values
+      // are emitted inside the Angular zone).
+      setTimeout(() => {
+        
+      });
     });
   }
 

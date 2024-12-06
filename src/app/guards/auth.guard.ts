@@ -20,3 +20,14 @@ export const authGuard: CanActivateFn = async (route, state) => {
     return urlTreeReturn;
   }
 };
+
+export const loggedGuard: CanActivateFn = async (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+  if (await authService.isAuth()) {
+    const urlTreeReturn = router.createUrlTree(['/finca']);
+    return urlTreeReturn;
+  } else {
+    return true;
+  }
+};

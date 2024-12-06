@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from "firebase/app";
 import { environment } from '../../environments/environment';
-import { collection, getDocs, addDoc, getFirestore, query, where, CollectionReference, DocumentData, QuerySnapshot, Firestore, onSnapshot, DocumentReference, doc, deleteDoc } from "firebase/firestore"; // conexion base de datos
+import { collection, getDocs, addDoc, getFirestore, query, where, CollectionReference, DocumentData, QuerySnapshot, Firestore, onSnapshot, DocumentReference, doc, deleteDoc, orderBy } from "firebase/firestore"; // conexion base de datos
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { Usuario } from '../types/Usuario';
 import { Ganado } from '../types/Ganado';
@@ -43,49 +43,6 @@ export class FirebaseService {
 
     //this.fincaDoc = doc(this.db, 'Finca');
     //this.ganadoDoc = doc(this.db, 'ganado');
-  }
-
-  // Metodo para actualizar lista de fincas en tiempo real
-  actualizarSnapshotFinca() {
-    try {
-      // Obtener datos en tiempo real
-      onSnapshot(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)), (snapshot) => {
-        this.updatedSnapshot.next(snapshot);
-      }, (err) => {
-        console.log(err);
-      });
-    } catch (error) {
-      console.log("Error: ", error)
-    }
-  }
-
-  // Metodo para actualizar lista de ganado en tiempo real
-  actualizarSnapshotGanado() {
-    try {
-      // Obtener datos en tiempo real
-      onSnapshot(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))), (snapshot) => {
-        this.updatedSnapshot.next(snapshot);
-      }, (err) => {
-        console.log(err);
-      });
-    } catch (error) {
-      console.log("Error: ", error)
-    }
-  }
-
-  // Metodo para actualizar lista de historial de toro en tiempo real
-  actualizarSnapshotHistorial() {
-    try {
-      // Obtener datos en tiempo real
-      onSnapshot(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
-        where("IDToro", "==", Number(this.getItem('IDToro') || this.idToro))), (snapshot) => {
-          this.updatedSnapshot.next(snapshot);
-        }, (err) => {
-          console.log(err);
-        });
-    } catch (error) {
-      console.log("Error: ", error)
-    }
   }
 
   /**
@@ -248,6 +205,68 @@ export class FirebaseService {
     }
   }
 
+  // Metodo para actualizar lista de fincas en tiempo real
+  actualizarSnapshotFinca() {
+    try {
+      // Obtener datos en tiempo real
+      onSnapshot(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)), (snapshot) => {
+        this.updatedSnapshot.next(snapshot);
+      }, (err) => {
+        console.log(err);
+      });
+    } catch (error) {
+      console.log("Error: ", error)
+    }
+  }
+
+  // Metodo para actualizar lista de ganado en tiempo real
+  actualizarSnapshotGanado() {
+    try {
+      // Obtener datos en tiempo real
+      onSnapshot(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)), orderBy("NumeroToro")), (snapshot) => {
+        this.updatedSnapshot.next(snapshot);
+      }, (err) => {
+        console.log(err);
+      });
+    } catch (error) {
+      console.log("Error: ", error)
+    }
+  }
+
+  // Metodo para actualizar lista de historial de toro en tiempo real
+  actualizarSnapshotHistorial() {
+    try {
+      // Obtener datos en tiempo real
+      onSnapshot(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
+        where("IDToro", "==", Number(this.getItem('IDToro') || this.idToro))), (snapshot) => {
+          this.updatedSnapshot.next(snapshot);
+        }, (err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.log("Error: ", error)
+    }
+  }
+
+  // Función para obtener las fincas del usuario
+  async obtenerFincasUsuario() {
+    const snapshot = await getDocs(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)));
+    return snapshot;
+  }
+
+  // Función para obtener ganado de la finca seleccionada
+  async obtenerGanadoFinca() {
+    const snapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)), orderBy("NumeroToro")));
+    return snapshot;
+  }
+
+  // Función para obtener historial del toro seleccionado
+  async obtenerHistorialToro() {
+    const snapshot = await getDocs(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
+      where("IDToro", "==", Number(this.getItem('IDToro') || this.idToro))));
+    return snapshot;
+  }
+
   /**
    * Función para login de usuario
    * @param datos 
@@ -354,6 +373,11 @@ export class FirebaseService {
         showConfirmButton: false,
         timer: 1000
       }).then(() => {
+        this.removeItem("FincaActual");
+        this.removeItem("IDFierro");
+        this.removeItem("IDToro");
+        this.removeItem("UID");
+        this.removeItem("Usuario");
         this.router.navigate(['/']);
       });
       // Sign-out successful.
@@ -363,24 +387,7 @@ export class FirebaseService {
     });
   }
 
-  // Función para obtener las fincas del usuario
-  async obtenerFincasUsuario() {
-    const snapshot = await getDocs(query(this.fincaCol, where("IDUsuario", "==", this.getItem("UID") || this.uid)));
-    return snapshot;
-  }
 
-  // Función para obtener ganado de la finca seleccionada
-  async obtenerGanadoFinca() {
-    const snapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro))));
-    return snapshot;
-  }
-
-  // Función para obtener historial del toro seleccionado
-  async obtenerHistorialToro() {
-    const snapshot = await getDocs(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
-      where("IDToro", "==", Number(this.getItem('IDToro') || this.idToro))));
-    return snapshot;
-  }
 
   /**
    * Funcion para eliminar finca seleccionada

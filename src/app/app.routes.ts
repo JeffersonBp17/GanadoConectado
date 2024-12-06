@@ -3,7 +3,7 @@ import { RegistroComponent } from './components/registro/registro.component';
 import { DatosComponent } from './components/datos/datos.component';
 import { LoginComponent } from './components/login/login.component';
 import { GanadoComponent } from './components/ganado/ganado.component';
-import { authGuard } from './guards/auth.guard';
+import { authGuard, loggedGuard } from './guards/auth.guard';
 import { NoEncontradoComponent } from './components/no-encontrado/no-encontrado.component';
 import { FincaComponent } from './components/finca/finca.component';
 
@@ -15,7 +15,8 @@ export const routes: Routes = [
     },
     {
         path: "login",
-        component: LoginComponent
+        component: LoginComponent,
+        canActivate: [loggedGuard]
     },
     {
         path: "datos",
@@ -29,7 +30,8 @@ export const routes: Routes = [
     },
     {
         path: 'registro',
-        component: RegistroComponent
+        component: RegistroComponent,
+        canActivate: [loggedGuard]
     },
     {
         path: 'ganado',
