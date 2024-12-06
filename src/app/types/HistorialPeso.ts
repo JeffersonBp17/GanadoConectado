@@ -1,5 +1,7 @@
 export type HistorialPeso = {
-    Fecha: Date,
+    IDFierroFinca: number,
+    IDToro: number,
+    FechaPeso: Date,
     Peso: number,
     Observaciones: string,
 }

@@ -41,6 +41,7 @@ export class FincaComponent implements OnInit{
     this.updateFincaCollection(snapshot);
   }
 
+  // Metodo para actualizar la tabla en tiempo real cuando se agrega o se elimina un registro
   updateFincaCollection(snapshot: QuerySnapshot<DocumentData>) {
     this.fincas = [];
     snapshot.docs.forEach((finca) => {
@@ -80,5 +81,6 @@ export class FincaComponent implements OnInit{
   // Metodo para cambiar estado agregar finca o ver fincas
   cambiarEstado() {
     this.estadoAgregar = !this.estadoAgregar;
+    this.fincaForm.reset();
   }
 }

@@ -1,12 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Livestock } from '../../types/LiveStock';
 import { FirebaseService } from '../../services/firebase.service';
 import { HeaderComponent } from "../header/header.component";
-import { DocumentData, QuerySnapshot, Timestamp } from 'firebase/firestore';
+import { DocumentData, QuerySnapshot } from 'firebase/firestore';
 import { Ganado } from '../../types/Ganado';
-import { Finca } from '../../types/Finca';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-ganado',
@@ -16,15 +15,14 @@ import { Finca } from '../../types/Finca';
   styleUrl: './ganado.component.scss'
 })
 export class GanadoComponent implements OnInit {
-  ganadoForm: FormGroup;
-  weightForm: FormGroup;
-  livestockList: Livestock[] = [];
+  ganadoForm: FormGroup;  
+  
   estadoAgregar: boolean = true;
   ganado: Ganado[] | any = [];
   finca: any | null | undefined;
   nombreFinca: string = '';
 
-  constructor(private fb: FormBuilder, public firebaseService: FirebaseService) {
+  constructor(private fb: FormBuilder, public firebaseService: FirebaseService, private router: Router) {
     // Formulario para registrar el toro
     this.ganadoForm = this.fb.group({
       toroId: ['', Validators.required],
@@ -32,14 +30,7 @@ export class GanadoComponent implements OnInit {
       purchaseWeight: ['', Validators.required],
       purchaseLocation: ['', Validators.required],
       batchNumber: ['', Validators.required]
-    });
-
-    // Formulario para añadir peso y observaciones
-    this.weightForm = this.fb.group({
-      date: [''],
-      weight: [''],
-      observation: ['']
-    });
+    });    
   }
 
   ngOnInit(): void {
@@ -65,6 +56,20 @@ export class GanadoComponent implements OnInit {
     this.updateGanadoCollection(snapshot);
   }
 
+  editar(NumeroToro: number, IDFierroFinca: number) {
+    this.firebaseService.setItem("IDToro", NumeroToro);
+    this.firebaseService.idToro = NumeroToro;
+    console.log(NumeroToro, IDFierroFinca);
+    this.router.navigateByUrl('/datos');
+  }
+
+  // Metodo para eliminar ganado
+  async eliminarGanado(NumeroToro: number) {
+    const res = await this.firebaseService.eliminarGanado(NumeroToro);
+    console.log(res);
+  }
+
+  // Metodo para actualizar la tabla en tiempo real cuando se agrega o se elimina un registro
   updateGanadoCollection(snapshot: QuerySnapshot<DocumentData>) {
     this.ganado = [];
     snapshot.docs.forEach((ganado) => {
@@ -85,21 +90,13 @@ export class GanadoComponent implements OnInit {
     const val = this.firebaseService.crearGanado(this.ganadoForm.value);
     if (await val) {
       this.estadoAgregar = !this.estadoAgregar;
-      this.ganadoForm.reset()
+      this.ganadoForm.reset();
     }    
-  }
-
-  // Función para agregar un registro de peso y observación a un toro específico
-  addWeightRecord(toroId: string) {
-    const livestock = this.livestockList.find(l => l.toroId === toroId);
-    if (livestock) {
-      livestock.weightRecords.push(this.weightForm.value);
-      this.weightForm.reset();
-    }
   }
 
   cambiarEstado() {
     this.estadoAgregar = !this.estadoAgregar;
+    this.ganadoForm.reset();
   }
 
 }

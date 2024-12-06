@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Finca } from '../types/Finca';
 import { Subject } from 'rxjs';
+import { HistorialPeso } from '../types/HistorialPeso';
 
 const app = initializeApp(environment.firebaseConfig);
 
@@ -18,11 +19,13 @@ const app = initializeApp(environment.firebaseConfig);
 export class FirebaseService {
   public uid: string = ''; // ID de usuario
   public idFierro: number = 0; // Numero de Fierro actual
+  public idToro: number = 0;
 
   db: Firestore;
   usuarioCol: CollectionReference<DocumentData>; // consulta db usuario
   fincaCol: CollectionReference<DocumentData>; // consulta para manejar la tabla/coleccion de fincas
   ganadoCol: CollectionReference<DocumentData>; // consulta db ganado 
+  historialCol: CollectionReference<DocumentData>; // Referencia a la tabla historial;
 
   //fincaDoc: DocumentReference<DocumentData>;
   //ganadoDoc: DocumentReference<DocumentData>;
@@ -36,6 +39,7 @@ export class FirebaseService {
     this.usuarioCol = collection(this.db, 'Usuario');
     this.fincaCol = collection(this.db, 'Finca');
     this.ganadoCol = collection(this.db, 'Ganado');
+    this.historialCol = collection(this.db, 'Historial');
 
     //this.fincaDoc = doc(this.db, 'Finca');
     //this.ganadoDoc = doc(this.db, 'ganado');
@@ -64,6 +68,21 @@ export class FirebaseService {
       }, (err) => {
         console.log(err);
       });
+    } catch (error) {
+      console.log("Error: ", error)
+    }
+  }
+
+  // Metodo para actualizar lista de historial de toro en tiempo real
+  actualizarSnapshotHistorial() {
+    try {
+      // Obtener datos en tiempo real
+      onSnapshot(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
+        where("IDToro", "==", Number(this.getItem('IDToro') || this.idToro))), (snapshot) => {
+          this.updatedSnapshot.next(snapshot);
+        }, (err) => {
+          console.log(err);
+        });
     } catch (error) {
       console.log("Error: ", error)
     }
@@ -153,17 +172,18 @@ export class FirebaseService {
   }
 
   /**
-   * Función para agregar datos a base de datos
+   * Función para agregar ganado
    */
   async crearGanado(datos: any): Promise<boolean> {
     try {
       // Validar si ya existe un toro con el numero de Toro
-      const q = query(this.ganadoCol, where("NumeroToro", "==", datos.toroId));
-      const querySnapshot = await getDocs(q);
+      const querySnapshot = await getDocs(query(this.ganadoCol, where("IDFierroFinca", "==", Number(this.getItem("IDFierro")) || Number(this.idFierro)),
+        where("NumeroToro", "==", datos.toroId)));
       let result: any[] = [];
       querySnapshot.forEach((doc) => {
         result.push(doc.data());
       });
+      console.log("RESULT: ", result, Number(this.getItem("IDFierro")) || Number(this.idFierro), datos.toroId);
       if (result.length < 1) {
         const [año, mes, dia] = datos.purchaseDate.split('-');
         let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
@@ -199,6 +219,34 @@ export class FirebaseService {
     }
   }
 
+  /**
+   * Función para agregar historial ganado
+   */
+  async crearHistorial(datos: any): Promise<boolean> {
+    try {
+      const [año, mes, dia] = datos.date.split('-');
+      let fecha = new Date(parseInt(año), parseInt(mes) - 1, parseInt(dia));
+      const historial: HistorialPeso = {
+        IDFierroFinca: Number(this.getItem("IDFierro")) || Number(this.idFierro),
+        IDToro: Number(this.getItem("IDToro") || Number(this.idToro)),
+        FechaPeso: fecha,
+        Peso: datos.weight,
+        Observaciones: datos.observation
+      }
+      const docRef = await addDoc(this.historialCol, historial);
+      let mensaje = `Registro de peso agregado exitosamente.`;
+      Swal.fire({
+        title: "Éxito",
+        text: mensaje,
+        icon: "success"
+      });
+      console.log("Document written with ID: ", docRef.id);
+      return true;
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      return false;
+    }
+  }
 
   /**
    * Función para login de usuario
@@ -327,21 +375,67 @@ export class FirebaseService {
     return snapshot;
   }
 
+  // Función para obtener historial del toro seleccionado
+  async obtenerHistorialToro() {
+    const snapshot = await getDocs(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
+      where("IDToro", "==", Number(this.getItem('IDToro') || this.idToro))));
+    return snapshot;
+  }
+
   /**
    * Funcion para eliminar finca seleccionada
    */
   async eliminarFinca(NumeroFierro: any) {
-    const finca = await this.buscarFinca(NumeroFierro);
-    console.log(finca);
-    const snapshot = await deleteDoc(doc(this.db, 'Finca', `${finca}`));
-    return snapshot;
+    Swal.fire({
+      title: "¿Está seguro que desea eliminar la Finca?",
+      text: `Si la elimina se borraran todos los registros!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Sí, eliminar!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const finca = await this.buscarFinca(NumeroFierro);
+        console.log(finca);
+        const snapshot = await deleteDoc(doc(this.db, 'Finca', `${finca}`));
+        Swal.fire({
+          title: "Eliminado!",
+          text: "Finca eliminada exitosamente.",
+          icon: "success"
+        });
+        return snapshot;
+      }
+    });
   }
 
   /**
    * Funcion para eliminar ganado seleccionado
    */
-  eliminarGanado(idGanado: any) {
-
+  async eliminarGanado(NumeroToro: number) {
+    Swal.fire({
+      title: "¿Está seguro que desea eliminar el Toro?",
+      text: `Si lo elimina se borraran todos los registros!`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      cancelButtonText: "Cancelar",
+      confirmButtonText: "Sí, eliminar!"
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const ganado = await this.buscarGanado(NumeroToro);
+        console.log(ganado);
+        const snapshot = await deleteDoc(doc(this.db, 'Ganado', `${ganado}`));
+        Swal.fire({
+          title: "Eliminado!",
+          text: "Toro eliminado exitosamente.",
+          icon: "success"
+        });
+        return snapshot;
+      }
+    });
   }
 
   /**
@@ -362,6 +456,18 @@ export class FirebaseService {
   async buscarFinca(NumeroFierro: any) {
     let result;
     const snapshot = await getDocs(query(this.fincaCol, where('NumeroFierro', '==', NumeroFierro)));
+    snapshot.forEach((doc) => {
+      result = doc.id;
+    });
+    return result;
+  }
+
+  /**
+   * Funcion para buscar ganado
+   */
+  async buscarGanado(NumeroToro: any) {
+    let result;
+    const snapshot = await getDocs(query(this.ganadoCol, where('NumeroToro', '==', NumeroToro)));
     snapshot.forEach((doc) => {
       result = doc.id;
     });

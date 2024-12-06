@@ -1,3 +1,75 @@
 <app-header></app-header>
 
-<h1>Datos</h1>
+@if (!estadoAgregar) {
+<div class="container">
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="card" style="max-width: 600px;">
+            <div class="card-body">
+                <h3>Historial de Peso y Observaciones</h3>
+                <!-- Formulario para registrar peso y observaciones -->
+                <form [formGroup]="historialForm" (ngSubmit)="addWeightRecord()">
+                    <label for="date">Fecha de Peso:</label>
+                    <input type="date" formControlName="date">
+                    <label for="weight">Peso (kg):</label>
+                    <input type="number" formControlName="weight">
+                    <label for="observation">Observación:</label>
+                    <input type="text" formControlName="observation">
+                    <br><br>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-lg btn-login" type="submit">Agregar Registro de Peso</button>
+                        <button class="btn btn-lg btn-outline-success" type="button" (click)="cambiarEstado()">Ver
+                            Historial</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+}
+@else {
+<div class="container">
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="card">
+            <div class="card-body">
+                <div class="form-row" style="display: flex;">
+                    <h4><a href="/ganado">Volver</a></h4>
+                </div>
+                <!-- Tabla de listado de registro de peso de ganado -->
+                <div class="form-row" style="display: flex;">
+                    <div class="form-group col-md-8" style="margin: auto">
+                        <h3 id="section-title">Historial de peso Toro número {{firebaseService.idToro}}</h3>
+                    </div>
+                    <div class="form-group col-md-4" style="margin: auto">
+                        <button class="btn btn-block btn-login" (click)="cambiarEstado()">
+                            <i class="fa fa-plus"></i>
+                            Agregar Registro
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive-sm" style="text-align: center">
+                    <table class="table table-striped table-bordered table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Fecha de Peso</th>
+                                <th scope="col">Peso (kg)</th>
+                                <th scope="col">Observación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (item of historial; track item.id) {
+                            <tr>
+                                <td>{{formatoFecha(item.FechaPeso.seconds) | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.Peso}}</td>
+                                <td>{{item.Observaciones}}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+}

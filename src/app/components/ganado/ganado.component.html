@@ -3,7 +3,7 @@
 @if (!estadoAgregar) {
 <div class="container">
     <div class="d-flex flex-wrap justify-content-center">
-        <div class="card" style="max-width: 600px;">
+        <div class="card" style="max-width: 800px;">
             <div class="card-body">
                 <!-- Sección dinámica para gestionar ganado -->
                 <h2 id="section-title">Gestión de Ganado</h2>
@@ -43,6 +43,9 @@
     <div class="d-flex flex-wrap justify-content-center">
         <div class="card">
             <div class="card-body">
+                <div class="form-row" style="display: flex;">
+                    <h4><a href="/finca">Volver</a></h4>
+                </div>
                 <!-- Tabla de listado de ganado -->
                 <div class="form-row" style="display: flex;">
                     <div class="form-group col-md-8" style="margin: auto">
@@ -77,8 +80,8 @@
                                 <td>{{item.LugarCompra}}</td>
                                 <td>{{item.NumeroLote}}</td>
                                 <td style="display: flex;">
-                                    <button type="button" class="btn btn-primary">Editar</button>
-                                    <button type="button" class="btn btn-danger">Eliminar</button>
+                                    <button type="button" class="btn btn-primary" (click)="editar(item.NumeroToro, item.IDFierroFinca)">Editar</button>
+                                    <button type="button" class="btn btn-danger" (click)="eliminarGanado(item.NumeroToro)">Eliminar</button>
                                 </td>
                             </tr>
                             }
