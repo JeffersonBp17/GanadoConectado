@@ -474,6 +474,18 @@ export class FirebaseService {
    */
   async buscarGanado(NumeroToro: any) {
     let result;
+    const snapshot = await getDocs(query(this.ganadoCol, where('NumeroToro', '==', NumeroToro), where("IDFierroFinca", "==", Number(this.getItem("IDFierro")) || Number(this.idFierro))));
+    snapshot.forEach((doc) => {
+      result = doc.id;
+    });
+    return result;
+  }
+
+  /**
+   * Funcion para buscar historial de ganado
+   */
+  async buscarHistorialGanado(NumeroToro: any) {
+    let result;
     const snapshot = await getDocs(query(this.ganadoCol, where('NumeroToro', '==', NumeroToro)));
     snapshot.forEach((doc) => {
       result = doc.id;
