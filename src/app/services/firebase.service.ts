@@ -283,6 +283,7 @@ export class FirebaseService {
           this.setItem("Usuario", JSON.stringify(result[0]));          
           this.setItem("UID", userCredential.user.uid);
           this.nombreUsuario = result[0].Nombre;
+          this.setItem("NombreUsuario", this.nombreUsuario);
           this.uid = this.getItem("UID") || userCredential.user.uid;
 
           let mensaje = `Bienvenido ${result[0].Nombre}!!!`;
@@ -331,6 +332,7 @@ export class FirebaseService {
         this.setItem("Usuario", JSON.stringify(result[0]));
         this.setItem("UID", userCredential.user.uid);
         this.nombreUsuario = result[0].Nombre;
+        this.setItem("NombreUsuario", this.nombreUsuario);
         this.uid = this.getItem("UID") || userCredential.user.uid;
         // registrar usuario en base de datos
         if (result.length < 1) {
