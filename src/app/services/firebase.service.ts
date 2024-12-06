@@ -20,6 +20,7 @@ export class FirebaseService {
   public uid: string = ''; // ID de usuario
   public idFierro: number = 0; // Numero de Fierro actual
   public idToro: number = 0;
+  public nombreUsuario: string = '';
 
   db: Firestore;
   usuarioCol: CollectionReference<DocumentData>; // consulta db usuario
@@ -279,8 +280,9 @@ export class FirebaseService {
           console.log(userCredential);
           let result = await this.buscarUsuario(userCredential.user.email);
           // guardar en localstorage
-          this.setItem("Usuario", JSON.stringify(result[0]));
+          this.setItem("Usuario", JSON.stringify(result[0]));          
           this.setItem("UID", userCredential.user.uid);
+          this.nombreUsuario = result[0].Nombre;
           this.uid = this.getItem("UID") || userCredential.user.uid;
 
           let mensaje = `Bienvenido ${result[0].Nombre}!!!`;
@@ -328,6 +330,7 @@ export class FirebaseService {
         // guardar en localstorage
         this.setItem("Usuario", JSON.stringify(result[0]));
         this.setItem("UID", userCredential.user.uid);
+        this.nombreUsuario = result[0].Nombre;
         this.uid = this.getItem("UID") || userCredential.user.uid;
         // registrar usuario en base de datos
         if (result.length < 1) {

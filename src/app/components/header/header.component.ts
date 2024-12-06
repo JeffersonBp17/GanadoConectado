@@ -11,7 +11,7 @@ import { FirebaseService } from '../../services/firebase.service';
 })
 export class HeaderComponent {
 
-  constructor(private router: Router, private firebaseService: FirebaseService) { }
+  constructor(private router: Router, public firebaseService: FirebaseService) { }
 
   /**
    * Función para cerrar sesión

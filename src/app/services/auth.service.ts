@@ -12,12 +12,8 @@ export class AuthService {
   constructor() { }
 
   async isAuth() {
-    //const auth = getAuth();
-    //const user = await auth.currentUser;
     const usuario = this.authService.getItem("Usuario");
-    console.log(usuario);
     if (usuario) {
-      // User is signed in, see docs for a list of available properties
       console.log("1");
       return true;
     } else {
@@ -25,8 +21,6 @@ export class AuthService {
       console.log("2");
       return false;
     }
-
-    //return this.token.length > 0;
   }
 
 

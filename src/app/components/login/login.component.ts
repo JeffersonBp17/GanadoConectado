@@ -33,11 +33,7 @@ export class LoginComponent {
    * Método para manejar la acción del botón 'Iniciar Sesión'
    */
   login() {
-    // se obtinen los datos de email y password para mostrarlos
-    console.log('Correo: ' + this.loginForm.get('email')?.value, '\nContraseña: ' + this.loginForm.get('password')?.value);
-
     this.firebaseService.autenticarUsuario(this.loginForm.value);
-    //this.router.navigate(['/finca']);
   }
 
   openWhatsApp() {
