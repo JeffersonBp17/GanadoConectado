@@ -433,6 +433,7 @@ export class FirebaseService {
     }).then(async (result) => {
       if (result.isConfirmed) {
         const ganado = await this.buscarGanado(NumeroToro);
+        await this.buscarHistorialGanado(NumeroToro);
         console.log(ganado);
         const snapshot = await deleteDoc(doc(this.db, 'Ganado', `${ganado}`));
         Swal.fire({
@@ -485,12 +486,15 @@ export class FirebaseService {
    * Funcion para buscar historial de ganado
    */
   async buscarHistorialGanado(NumeroToro: any) {
-    let result;
-    const snapshot = await getDocs(query(this.ganadoCol, where('NumeroToro', '==', NumeroToro)));
-    snapshot.forEach((doc) => {
-      result = doc.id;
+    //let result;
+    const snapshot = await getDocs(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
+    where("IDToro", "==", NumeroToro)));
+    snapshot.forEach(async (item) => {
+      await deleteDoc(doc(this.db, 'Historial', `${item.id}`));
+      //result = item.id;
+      console.log(item.id);
     });
-    return result;
+    //return result;
   }
 
   // Set a value in local storage
