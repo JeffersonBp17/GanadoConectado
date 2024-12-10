@@ -7,13 +7,13 @@
             <div class="card-body">
                 <h3>Historial de Peso y Observaciones</h3>
                 <!-- Formulario para registrar peso y observaciones -->
-                <form [formGroup]="historialForm" (ngSubmit)="addWeightRecord()">
+                <form [formGroup]="historialForm" (ngSubmit)="addWeightRecord()" ngNativeValidate>
                     <label for="date">Fecha de Peso:</label>
-                    <input type="date" formControlName="date">
+                    <input type="date" formControlName="date" required>
                     <label for="weight">Peso (kg):</label>
-                    <input type="number" formControlName="weight">
+                    <input type="number" formControlName="weight" required>
                     <label for="observation">Observación:</label>
-                    <input type="text" formControlName="observation">
+                    <input type="text" formControlName="observation" required>
                     <br><br>
                     <div class="d-grid gap-2">
                         <button class="btn btn-lg btn-login" type="submit">Agregar Registro de Peso</button>

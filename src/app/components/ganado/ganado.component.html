@@ -10,21 +10,21 @@
 
                 <!-- Formulario para agregar ganado -->
                 <h3>Añadir Ganado</h3>
-                <form [formGroup]="ganadoForm" (ngSubmit)="crearGanado()">
+                <form [formGroup]="ganadoForm" (ngSubmit)="crearGanado()" ngNativeValidate>
                     <label for="toro-id">Número de Toro:</label>
-                    <input class="form-control-lg" type="number" formControlName="toroId">
+                    <input class="form-control-lg" type="number" formControlName="toroId" required>
 
                     <label for="purchase-date">Fecha de Compra:</label>
-                    <input class="form-control-lg" type="date" formControlName="purchaseDate">
+                    <input class="form-control-lg" type="date" formControlName="purchaseDate" required>
 
                     <label for="purchase-weight">Peso de Compra (kg):</label>
-                    <input class="form-control-lg" type="number" formControlName="purchaseWeight">
+                    <input class="form-control-lg" type="number" formControlName="purchaseWeight" required>
 
                     <label for="purchase-location">Lugar de Compra:</label>
-                    <input class="form-control-lg" type="text" formControlName="purchaseLocation">
+                    <input class="form-control-lg" type="text" formControlName="purchaseLocation" required>
 
                     <label for="batch-number">Lote N°:</label>
-                    <input class="form-control-lg" type="number" formControlName="batchNumber">
+                    <input class="form-control-lg" type="number" formControlName="batchNumber" required>
                     <br><br>
                     <div class="d-grid gap-2">
                         <button class="btn btn-lg btn-login" type="submit">Agregar</button>

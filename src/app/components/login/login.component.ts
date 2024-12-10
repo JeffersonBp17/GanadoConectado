@@ -17,7 +17,7 @@ export class LoginComponent {
     // se crea el formulario loginForm para el manejo de datos email y password del login
     this.loginForm = fb.group({
       // cada variable se usa para obtener el valor de cada input
-      Correo: ['', Validators.required], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
+      Correo: ['', [Validators.required, Validators.email]], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
       Contrasena: ['', Validators.required],
     });
   }

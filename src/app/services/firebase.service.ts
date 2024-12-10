@@ -280,7 +280,7 @@ export class FirebaseService {
           console.log(userCredential);
           let result = await this.buscarUsuario(userCredential.user.email);
           // guardar en localstorage
-          this.setItem("Usuario", JSON.stringify(result[0]));          
+          this.setItem("Usuario", JSON.stringify(result[0]));
           this.setItem("UID", userCredential.user.uid);
           this.nombreUsuario = result[0].Nombre;
           this.setItem("NombreUsuario", this.nombreUsuario);
@@ -328,12 +328,6 @@ export class FirebaseService {
         const user = userCredential.user;
 
         let result = await this.buscarUsuario(userCredential.user.email);
-        // guardar en localstorage
-        this.setItem("Usuario", JSON.stringify(result[0]));
-        this.setItem("UID", userCredential.user.uid);
-        this.nombreUsuario = result[0].Nombre;
-        this.setItem("NombreUsuario", this.nombreUsuario);
-        this.uid = this.getItem("UID") || userCredential.user.uid;
         // registrar usuario en base de datos
         if (result.length < 1) {
           const usuario: Usuario = {
@@ -341,6 +335,13 @@ export class FirebaseService {
             Correo: userCredential.user.email,
           };
           await addDoc(this.usuarioCol, usuario);
+
+          // guardar en localstorage
+          this.setItem("Usuario", JSON.stringify(usuario));
+          this.setItem("UID", userCredential.user.uid);
+          this.nombreUsuario = userCredential.user.displayName;
+          this.setItem("NombreUsuario", this.nombreUsuario);
+          this.uid = this.getItem("UID") || userCredential.user.uid;
         }
         let mensaje = `Bienvenido ${userCredential.user.displayName}!!!`;
         Swal.fire({
@@ -493,7 +494,7 @@ export class FirebaseService {
   async buscarHistorialGanado(NumeroToro: any) {
     //let result;
     const snapshot = await getDocs(query(this.historialCol, where("IDFierroFinca", "==", Number(this.getItem('IDFierro') || this.idFierro)),
-    where("IDToro", "==", NumeroToro)));
+      where("IDToro", "==", NumeroToro)));
     snapshot.forEach(async (item) => {
       await deleteDoc(doc(this.db, 'Historial', `${item.id}`));
       //result = item.id;

@@ -8,7 +8,7 @@
         <h1>Datos de la Finca</h1>
 
         <!-- Formulario para crear la finca -->
-        <form id="farm-form" [formGroup]="fincaForm" (submit)="crearFinca()">
+        <form id="farm-form" [formGroup]="fincaForm" (submit)="crearFinca()" ngNativeValidate>
           <label for="farm-name">Nombre de la Finca:</label>
           <input type="text" id="farm-name" formControlName="Nombre" required>
 

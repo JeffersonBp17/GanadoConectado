@@ -18,8 +18,8 @@ export class RegistroComponent {
     this.registroForm = this.fb.group({
       // cada variable se usa para obtener el valor de cada input
       Nombre: ['', Validators.required], //new FormControl('', Validators.required),  // Nombre Completo
-      Correo: ['', Validators.required], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
-      Contrasena: ['', Validators.required], //new FormControl('', [Validators.required, Validators.minLength(8)])   // Contraseña
+      Correo: ['', [Validators.required, Validators.email]], //new FormControl('', [Validators.required, Validators.email]),     // Correo Electrónico
+      Contrasena: ['', [Validators.required]], //new FormControl('', [Validators.required, Validators.minLength(8)])   // Contraseña
     });
   }
 
