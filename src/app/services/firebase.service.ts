@@ -329,20 +329,20 @@ export class FirebaseService {
 
         let result = await this.buscarUsuario(userCredential.user.email);
         // registrar usuario en base de datos
+        const usuario: Usuario = {
+          Nombre: userCredential.user.displayName,
+          Correo: userCredential.user.email,
+        };
         if (result.length < 1) {
-          const usuario: Usuario = {
-            Nombre: userCredential.user.displayName,
-            Correo: userCredential.user.email,
-          };
           await addDoc(this.usuarioCol, usuario);
-
-          // guardar en localstorage
-          this.setItem("Usuario", JSON.stringify(usuario));
-          this.setItem("UID", userCredential.user.uid);
-          this.nombreUsuario = userCredential.user.displayName;
-          this.setItem("NombreUsuario", this.nombreUsuario);
-          this.uid = this.getItem("UID") || userCredential.user.uid;
         }
+        // guardar en localstorage
+        this.setItem("Usuario", JSON.stringify(usuario));
+        this.setItem("UID", userCredential.user.uid);
+        this.nombreUsuario = userCredential.user.displayName;
+        this.setItem("NombreUsuario", this.nombreUsuario);
+        this.uid = this.getItem("UID") || userCredential.user.uid;
+
         let mensaje = `Bienvenido ${userCredential.user.displayName}!!!`;
         Swal.fire({
           title: "Inicio de sesión exitoso",
@@ -384,6 +384,7 @@ export class FirebaseService {
         this.removeItem("IDToro");
         this.removeItem("UID");
         this.removeItem("Usuario");
+        this.removeItem("NombreUsuario");        
         this.router.navigate(['/']);
       });
       // Sign-out successful.
